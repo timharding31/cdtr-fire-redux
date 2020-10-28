@@ -1,0 +1,116 @@
+{
+    "coup-de-tim": {
+        "users": {
+            "byUsername": {},
+            "players": [],
+            "spectators": [],
+            "currentPlayer": null,
+            "target": null
+        },
+        "cards": {
+            "ambassador": {},
+            "assassin": {},
+            "captain": {},
+            "contessa": {},
+            "duke": {}
+        },
+        "hands": {
+            "liveCards": {},
+            "deadCards": {},
+            "coins": null
+        },
+        "court": {
+            "treasury": null,
+            "courtDeck": []
+        },
+        "actions": {
+            "income": {
+                "blockable": false,
+                "challengeable": false,
+                "hasTarget": false,
+                "coinsRequired": 0,
+                "charactersClaimed": []
+            },
+            "foreignAid": {
+                "blockable": true,
+                "challengeable": false,
+                "hasTarget": false,
+                "coinsRequired": 0,
+                "charactersClaimed": []
+            },
+            "coup": {
+                "blockable": false,
+                "challengeable": false,
+                "hasTarget": true,
+                "coinsRequired": 7,
+                "charactersClaimed": []
+            },
+            "tax": {
+                "blockable": false,
+                "challengeable": true,
+                "hasTarget": false,
+                "coinsRequired": 0,
+                "charactersClaimed": ["duke"]
+            },
+            "assassinate": {
+                "blockable": true,
+                "challengeable": true,
+                "hasTarget": true,
+                "coinsRequired": 3,
+                "charactersClaimed": ["assassin"]
+            },
+            "exchange": {
+                "blockable": false,
+                "challengeable": true,
+                "hasTarget": false,
+                "coinsRequired": 0,
+                "charactersClaimed": ["ambassador"]
+            },
+            "steal": {
+                "blockable": true,
+                "challengeable": true,
+                "hasTarget": true,
+                "coinsRequired": 0,
+                "charactersClaimed": ["captain"]
+            }
+        },
+        "counterActions": {
+            "blockForeignAid": {
+                "challengeable": true,
+                "charactersClaimed": ["duke"]
+            },
+            "blockAssassinate": {
+                "challengeable": true,
+                "charactersClaimed": ["contessa"]
+            },
+            "blockSteal": {
+                "challengeable": true,
+                "charactersClaimed": ["captain", "ambassador"]
+            }
+        },
+        "turns": {
+            "currentTurn": {
+                "action": {
+                    "playerChoice": null,
+                    "wasBlocked": null,
+                    "wasChallenged": null,
+                    "wasAllowed": null,
+                    "wasSuccessful": null,
+                    "target": null,
+                    "challenger": null,
+                    "blocker": null,
+                    "actionLoserCardChoice": null,
+                    "exchangeReturnChoices": []
+                },
+                "challenge": {
+                    "challenger": null,
+                    "challengee": null,
+                    "actionChallenged": null,
+                    "lostChallenge": null,
+                    "challengeLoserCardChoice": []
+                }
+            },
+            "previousTurns": []
+        }
+    }
+}
