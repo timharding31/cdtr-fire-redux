@@ -1,27 +1,11 @@
 {
-    "coup-de-tim": {
-        "users": {
-            "byUsername": {},
-            "players": [],
-            "spectators": [],
-            "currentPlayer": null,
-            "target": null
-        },
+    "static": {
         "cards": {
             "ambassador": {},
             "assassin": {},
             "captain": {},
             "contessa": {},
             "duke": {}
-        },
-        "hands": {
-            "liveCards": {},
-            "deadCards": {},
-            "coins": null
-        },
-        "court": {
-            "treasury": null,
-            "courtDeck": []
         },
         "actions": {
             "income": {
@@ -50,43 +34,77 @@
                 "challengeable": true,
                 "hasTarget": false,
                 "coinsRequired": 0,
-                "charactersClaimed": ["duke"]
+                "charactersClaimed": [
+                    "duke"
+                ]
             },
             "assassinate": {
                 "blockable": true,
                 "challengeable": true,
                 "hasTarget": true,
                 "coinsRequired": 3,
-                "charactersClaimed": ["assassin"]
+                "charactersClaimed": [
+                    "assassin"
+                ]
             },
             "exchange": {
                 "blockable": false,
                 "challengeable": true,
                 "hasTarget": false,
                 "coinsRequired": 0,
-                "charactersClaimed": ["ambassador"]
+                "charactersClaimed": [
+                    "ambassador"
+                ]
             },
             "steal": {
                 "blockable": true,
                 "challengeable": true,
                 "hasTarget": true,
                 "coinsRequired": 0,
-                "charactersClaimed": ["captain"]
+                "charactersClaimed": [
+                    "captain"
+                ]
             }
         },
         "counterActions": {
             "blockForeignAid": {
                 "challengeable": true,
-                "charactersClaimed": ["duke"]
+                "charactersClaimed": [
+                    "duke"
+                ]
             },
             "blockAssassinate": {
                 "challengeable": true,
-                "charactersClaimed": ["contessa"]
+                "charactersClaimed": [
+                    "contessa"
+                ]
             },
             "blockSteal": {
                 "challengeable": true,
-                "charactersClaimed": ["captain", "ambassador"]
+                "charactersClaimed": [
+                    "captain",
+                    "ambassador"
+                ]
             }
+        }
+    },
+    "game": {
+        "id": null,
+        "users": {
+            "allUsers": {},
+            "players": [],
+            "spectators": [],
+            "currentPlayer": null,
+            "target": null
+        },
+        "hands": {
+            "liveCards": {},
+            "deadCards": {},
+            "coins": null
+        },
+        "court": {
+            "treasury": null,
+            "courtDeck": []
         },
         "turns": {
             "currentTurn": {
@@ -96,18 +114,22 @@
                     "wasChallenged": null,
                     "wasAllowed": null,
                     "wasSuccessful": null,
+                    "isComplete": null,
                     "target": null,
                     "challenger": null,
                     "blocker": null,
-                    "actionLoserCardChoice": null,
-                    "exchangeReturnChoices": []
+                    "actionLoserCardIndex": null,
+                    "exchangeReturnIndices": []
                 },
                 "challenge": {
                     "challenger": null,
-                    "challengee": null,
+                    "challengee": {
+                        "name": null,
+                        "hasCard": null,
+                        "cardIndex": null
+                    },
                     "actionChallenged": null,
-                    "lostChallenge": null,
-                    "challengeLoserCardChoice": []
+                    "challengeLoserCardIndex": []
                 }
             },
             "previousTurns": []
