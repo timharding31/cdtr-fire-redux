@@ -1,25 +1,20 @@
-import React from 'react';
-import { connect } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useFirebase, useFirebaseConnect } from 'react-redux-firebase';
+import { constantState } from './config/initial_state';
 import './App.css';
 
-const App = ({ log, firebase }) => {
-    log();
-    console.log(firebase);
-  return (
+const App = () => {
+    const firebase = useFirebase();
+    useFirebaseConnect('constant');
+    useEffect(() => {
+        firebase.set('constant', constantState);
+    });
+
+    return (
       <>
-      <p>test</p>
+        <p>test</p>
       </>
   );
-}
+};
 
-const mstp = ({ firebase }) => ({
-    firebase
-});
-
-const mdtp = dispatch => ({
-    log: () => console.log(dispatch)
-})
-
-
-
-export default connect(mstp, mdtp)(App);
+export default App

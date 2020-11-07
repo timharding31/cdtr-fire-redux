@@ -1,11 +1,56 @@
 {
     "static": {
         "cards": {
-            "ambassador": {},
-            "assassin": {},
-            "captain": {},
-            "contessa": {},
-            "duke": {}
+            "ambassador": {
+                "name": "Ambassador",
+                "image": null,
+                "symbol": null,
+                "action": "Exchange",
+                "effect": "Exchange cards with Court Deck",
+                "counteraction": "Blocks stealing",
+                "brushStroke": null,
+                "backgroundColor": "rgba(76, 152, 112, 0.5)"
+            },
+            "assassin": {
+                "name": "Assassin",
+                "image": null,
+                "symbol": null,
+                "action": "Assassinate",
+                "effect": "Pay 3 coins to assassinate another player",
+                "counteraction": "",
+                "brushStroke": null,
+                "backgroundColor": "rgba(22, 28, 29, 0.5)"
+            },
+            "captain": {
+                "name": "Captain",
+                "image": null,
+                "symbol": null,
+                "action": "Steal",
+                "effect": "Take 2 coins from another player",
+                "counteraction": "Blocks stealing",
+                "brushStroke": null,
+                "backgroundColor": "rgba(55, 97, 113, 0.5)"
+            },
+            "contessa": {
+                "name": "Contessa",
+                "image": null,
+                "symbol": null,
+                "action": "",
+                "effect": "",
+                "counteraction": "Blocks Assassination",
+                "brushStroke": null,
+                "backgroundColor": "rgba(155, 51, 42, 0.5)"
+            },
+            "duke": {
+                "name": "Duke",
+                "image": null,
+                "symbol": null,
+                "action": "Tax",
+                "effect": "Take 3 coins from Treasury",
+                "counteraction": "Blocks Foreign Aid",
+                "brushStroke": null,
+                "backgroundColor": "rgba(138, 49, 123, 0.5)"
+            }
         },
         "actions": {
             "income": {
@@ -90,6 +135,7 @@
     },
     "game": {
         "id": null,
+        "status": null,
         "users": {
             "allUsers": {},
             "players": [],

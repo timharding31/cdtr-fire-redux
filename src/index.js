@@ -1,31 +1,52 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import firebase from "firebase/app";
-import "firebase/database";
-import { firebaseConfig } from './config/firebase';
 import './index.css';
+import firebase from 'firebase/app';
+import 'firebase/database';
+import 'firebase/storage';
 import App from './App';
-import store from './config/store';
-import { firebaseReactReduxProps } from './config/firebase';
-import { ReactReduxFirebaseProvider } from 'react-redux-firebase';
+import { ReactReduxFirebaseProvider, firebaseReducer } from 'react-redux-firebase';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import * as serviceWorker from './serviceWorker';
+import { combineReducers, createStore, applyMiddleware } from 'redux';
+import logger from "redux-logger";
+
+const rootReducer = combineReducers({
+    firebase: firebaseReducer
+});
+
+const store = createStore(rootReducer, {}, applyMiddleware(logger));
+
+const firebaseConfig = {
+    apiKey: process.env.REACT_APP_API_KEY,
+    authDomain: process.env.REACT_APP_AUTH_DOMAIN,
+    databaseURL: process.env.REACT_APP_DATABASE_URL,
+    projectId: process.env.REACT_APP_PROJECT_ID,
+    storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
+    messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
+    appId: process.env.REACT_APP_APP_ID
+};
 
 firebase.initializeApp(firebaseConfig);
-const database = firebase.database();
+firebase.database();
+firebase.storage();
+
+const firebaseReactReduxProps = {
+    firebase,
+    config: {},
+    dispatch: store.dispatch
+};
 
 ReactDOM.render(
-  <React.StrictMode>
-        <Provider store={store}>
-            <ReactReduxFirebaseProvider {...firebaseReactReduxProps} >
-                <BrowserRouter>
-                    <App />
-                </BrowserRouter>
-            </ReactReduxFirebaseProvider>
-        </Provider>
-  </React.StrictMode>,
-  document.getElementById('root')
+    <Provider store={store}>
+        <ReactReduxFirebaseProvider {...firebaseReactReduxProps} >
+            <BrowserRouter>
+                <App />
+            </BrowserRouter>
+        </ReactReduxFirebaseProvider>
+    </Provider>
+  , document.getElementById('root')
 );
 
 // If you want your app to work offline and load faster, you can change
