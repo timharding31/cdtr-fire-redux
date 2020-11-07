@@ -140,4 +140,51 @@ export const constantState = {
     }
 };
 
-export const gameState = {};
+export const createGameState = (pin) => ({
+    pin,
+    status: "Waiting for players",
+    users: {
+        allUsers: {},
+        players: [],
+        spectators: [],
+        currentPlayer: null,
+        target: null
+    },
+    hands: {
+        liveCards: {},
+        deadCards: {},
+        coins: null
+    },
+    court: {
+        treasury: null,
+        courtDeck: []
+    },
+    turns: {
+        currentTurn: {
+            action: {
+                playerChoice: null,
+                wasBlocked: null,
+                wasChallenged: null,
+                wasAllowed: null,
+                wasSuccessful: null,
+                isComplete: null,
+                target: null,
+                challenger: null,
+                blocker: null,
+                actionLoserCardIndex: null,
+                exchangeReturnIndices: []
+            },
+            challenge: {
+                challenger: null,
+                challengee: {
+                    name: null,
+                    hasCard: null,
+                    cardIndex: null
+                },
+                actionChallenged: null,
+                challengeLoserCardIndex: []
+            }
+        },
+        previousTurns: []
+    }
+});
