@@ -4,8 +4,8 @@ import { useFirebase, useFirebaseConnect } from 'react-redux-firebase';
 import { constantState } from './config/initial_state';
 import './App.css';
 import { useDeviceDetect } from './util/hooks';
-import DesktopApp from './App_desktop';
-import MobileApp from './App_mobile';
+import DesktopApp from './components/desktop';
+import MobileApp from './components/mobile';
 
 const App = () => {
     useFirebaseConnect('constant');
@@ -14,6 +14,7 @@ const App = () => {
     useEffect(() => {
         if (JSON.stringify(constantData) === '{}') {
             firebase.set('constant', constantState);
+            firebase.set('games', {});
         }
     }, [firebase, constantData]);
 
