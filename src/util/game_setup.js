@@ -22,4 +22,12 @@ export const dealHands = ({ firebase, players, gamePIN }) => {
             });
         })
     });
-}
+};
+
+export const dealCoins = ({ firebase, players, gamePIN }) => {
+    let treasuryRef = firebase.database().ref('games/' + gamePIN + '/court/treasury');
+    players.forEach(player => {
+        treasuryRef.set(firebase.database.ServerValue.increment(-2));
+        firebase.database().ref('games/' + gamePIN + '/hands/coins/' + player).set(2)
+    });
+};

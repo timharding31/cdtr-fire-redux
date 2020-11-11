@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useEffect } from 'react';
-import { dealHands } from '../../util/game_setup';
+import { dealHands, dealCoins } from '../../util/game_setup';
 import { useFirebase } from 'react-redux-firebase';
 
 const Game = () => {
@@ -18,6 +18,7 @@ const Game = () => {
         e.preventDefault();
         let players = Object.values(game.users.players);
         dealHands({ firebase, gamePIN, players});
+        dealCoins({ firebase, gamePIN, players});
         firebase.database().ref('games/' + gamePIN + '/status').set('In progress');
     }
 

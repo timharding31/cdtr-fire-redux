@@ -6,17 +6,17 @@ import 'firebase/database';
 import 'firebase/storage';
 import 'firebase/auth';
 import App from './App';
+import { constantState } from './config/initial_state';
 import { ReactReduxFirebaseProvider, firebaseReducer } from 'react-redux-firebase';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import * as serviceWorker from './serviceWorker';
-import { staticReducer } from './util/reducers';
 import { combineReducers, createStore, applyMiddleware } from 'redux';
 import logger from "redux-logger";
 
 const rootReducer = combineReducers({
     firebase: firebaseReducer,
-    staticData: staticReducer
+    staticData: (state={ ...constantState }) => state
 });
 
 const store = createStore(rootReducer, {}, applyMiddleware(logger));
@@ -34,11 +34,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 firebase.database();
 firebase.storage();
-firebase.auth().signInAnonymously().catch(function (error) {
-    var errorCode = error.code;
-    var errorMessage = error.message;
-    alert(errorCode, errorMessage);
-});
+firebase.auth().signInAnonymously().catch(error => alert(error.code, error.message));
 
 const firebaseReactReduxProps = {
     firebase,
@@ -54,7 +50,7 @@ ReactDOM.render(
             </BrowserRouter>
         </ReactReduxFirebaseProvider>
     </Provider>
-  , document.getElementById('root')
+    , document.getElementById('root')
 );
 
 // If you want your app to work offline and load faster, you can change
