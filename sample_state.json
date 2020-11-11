@@ -1,27 +1,56 @@
 {
-    "coup-de-tim": {
-        "users": {
-            "byUsername": {},
-            "players": [],
-            "spectators": [],
-            "currentPlayer": null,
-            "target": null
-        },
+    "static": {
         "cards": {
-            "ambassador": {},
-            "assassin": {},
-            "captain": {},
-            "contessa": {},
-            "duke": {}
-        },
-        "hands": {
-            "liveCards": {},
-            "deadCards": {},
-            "coins": null
-        },
-        "court": {
-            "treasury": null,
-            "courtDeck": []
+            "ambassador": {
+                "name": "Ambassador",
+                "image": null,
+                "symbol": null,
+                "action": "Exchange",
+                "effect": "Exchange cards with Court Deck",
+                "counteraction": "Blocks stealing",
+                "brushStroke": null,
+                "backgroundColor": "rgba(76, 152, 112, 0.5)"
+            },
+            "assassin": {
+                "name": "Assassin",
+                "image": null,
+                "symbol": null,
+                "action": "Assassinate",
+                "effect": "Pay 3 coins to assassinate another player",
+                "counteraction": "",
+                "brushStroke": null,
+                "backgroundColor": "rgba(22, 28, 29, 0.5)"
+            },
+            "captain": {
+                "name": "Captain",
+                "image": null,
+                "symbol": null,
+                "action": "Steal",
+                "effect": "Take 2 coins from another player",
+                "counteraction": "Blocks stealing",
+                "brushStroke": null,
+                "backgroundColor": "rgba(55, 97, 113, 0.5)"
+            },
+            "contessa": {
+                "name": "Contessa",
+                "image": null,
+                "symbol": null,
+                "action": "",
+                "effect": "",
+                "counteraction": "Blocks Assassination",
+                "brushStroke": null,
+                "backgroundColor": "rgba(155, 51, 42, 0.5)"
+            },
+            "duke": {
+                "name": "Duke",
+                "image": null,
+                "symbol": null,
+                "action": "Tax",
+                "effect": "Take 3 coins from Treasury",
+                "counteraction": "Blocks Foreign Aid",
+                "brushStroke": null,
+                "backgroundColor": "rgba(138, 49, 123, 0.5)"
+            }
         },
         "actions": {
             "income": {
@@ -50,43 +79,78 @@
                 "challengeable": true,
                 "hasTarget": false,
                 "coinsRequired": 0,
-                "charactersClaimed": ["duke"]
+                "charactersClaimed": [
+                    "duke"
+                ]
             },
             "assassinate": {
                 "blockable": true,
                 "challengeable": true,
                 "hasTarget": true,
                 "coinsRequired": 3,
-                "charactersClaimed": ["assassin"]
+                "charactersClaimed": [
+                    "assassin"
+                ]
             },
             "exchange": {
                 "blockable": false,
                 "challengeable": true,
                 "hasTarget": false,
                 "coinsRequired": 0,
-                "charactersClaimed": ["ambassador"]
+                "charactersClaimed": [
+                    "ambassador"
+                ]
             },
             "steal": {
                 "blockable": true,
                 "challengeable": true,
                 "hasTarget": true,
                 "coinsRequired": 0,
-                "charactersClaimed": ["captain"]
+                "charactersClaimed": [
+                    "captain"
+                ]
             }
         },
         "counterActions": {
             "blockForeignAid": {
                 "challengeable": true,
-                "charactersClaimed": ["duke"]
+                "charactersClaimed": [
+                    "duke"
+                ]
             },
             "blockAssassinate": {
                 "challengeable": true,
-                "charactersClaimed": ["contessa"]
+                "charactersClaimed": [
+                    "contessa"
+                ]
             },
             "blockSteal": {
                 "challengeable": true,
-                "charactersClaimed": ["captain", "ambassador"]
+                "charactersClaimed": [
+                    "captain",
+                    "ambassador"
+                ]
             }
+        }
+    },
+    "game": {
+        "id": null,
+        "status": null,
+        "users": {
+            "allUsers": {},
+            "players": [],
+            "spectators": [],
+            "currentPlayer": null,
+            "target": null
+        },
+        "hands": {
+            "liveCards": {},
+            "deadCards": {},
+            "coins": null
+        },
+        "court": {
+            "treasury": null,
+            "courtDeck": []
         },
         "turns": {
             "currentTurn": {
@@ -96,18 +160,22 @@
                     "wasChallenged": null,
                     "wasAllowed": null,
                     "wasSuccessful": null,
+                    "isComplete": null,
                     "target": null,
                     "challenger": null,
                     "blocker": null,
-                    "actionLoserCardChoice": null,
-                    "exchangeReturnChoices": []
+                    "actionLoserCardIndex": null,
+                    "exchangeReturnIndices": []
                 },
                 "challenge": {
                     "challenger": null,
-                    "challengee": null,
+                    "challengee": {
+                        "name": null,
+                        "hasCard": null,
+                        "cardIndex": null
+                    },
                     "actionChallenged": null,
-                    "lostChallenge": null,
-                    "challengeLoserCardChoice": []
+                    "challengeLoserCardIndex": []
                 }
             },
             "previousTurns": []
