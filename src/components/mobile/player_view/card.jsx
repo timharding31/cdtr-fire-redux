@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import * as cdt from '../../../util/styles';
 
 const FaceUpCard = ({
+    cardId,
     action,
     backgroundColor,
     brushStroke,
@@ -16,11 +17,16 @@ const FaceUpCard = ({
 }) => {
     const firebase = useFirebase();
     const firebaseRef = firebase.storage().ref();
-    const source = {
-        image: firebaseRef.child(image).fullPath,
-        symbol: firebaseRef.child(symbol).fullPath,
-        brushStroke: firebaseRef.child(brushStroke).fullPath,
-    }
+    firebaseRef.child(image).getDownloadURL().then(url => {
+        document.getElementById(`img-${cardId}`).src = url;
+    });
+    firebaseRef.child(symbol).getDownloadURL().then(url => {
+        document.getElementById(`symbol-${cardId}`).src = url;
+    });
+    firebaseRef.child(brushStroke).getDownloadURL().then(url => {
+        document.getElementById(`abilities-${cardId}`).style.backgroundImage = `url(${url})`;
+    });
+
     const StyledCard = styled.div(({ width, height }) => ({
         width,
         height,
@@ -66,7 +72,6 @@ const FaceUpCard = ({
     };
 
     const cardAbilitiesStyle = {
-        backgroundImage: `${source.brushStroke}`,
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
@@ -109,16 +114,16 @@ const FaceUpCard = ({
         textShadow: `0.25px 0.25px 0.5px ${cdt.blackShadow}`,
         fontWeight: '700',
         zIndex: '0',
-        writingMde: 'vertical-lr',
+        writingMode: 'vertical-lr',
     }));
 
     return (
         <StyledCard width={'240px'} height={'336px'}>
             <div style={cardTintStyle} />
             <CardHeader color={'#4C9870'}>{name}</CardHeader>
-            <img src={source.image} style={cardImageStyle} />
-            <img src={source.symbol} style={cardSymbolStyle} />
-            <ul style={cardAbilitiesStyle}>
+            <img id={`img-${cardId}`} style={cardImageStyle} />
+            <img id={`symbol-${cardId}`} style={cardSymbolStyle} />
+            <ul style={cardAbilitiesStyle} id={`abilities-${cardId}`}>
                 {[effect, counteraction].map((ability, idx) => (
                     <li key={`ability-${idx}`} style={cardAbilitiesListItemStyle}>
                         {ability}

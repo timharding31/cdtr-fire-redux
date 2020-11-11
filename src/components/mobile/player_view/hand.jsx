@@ -8,9 +8,9 @@ const PlayerHand = ({ player, liveCards }) => {
     return (
         <>
             <h1>{player}</h1>
-            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-evenly', width: '500px', height: '1000px'}}>
-                {Object.values(liveCards).map(character => (
-                    <FaceUpCard {...cardData[character]} />
+            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', width: '500px', height: '1000px'}}>
+                {Object.entries(liveCards).map(([cardId, character]) => (
+                    <FaceUpCard cardId={cardId} {...cardData[character]} key={cardId}/>
                 ))}
             </div>
         </>

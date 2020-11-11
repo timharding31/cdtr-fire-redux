@@ -8,13 +8,13 @@ import MobileApp from './components/mobile';
 
 const App = () => {
     useFirebaseConnect('games');
-    const firebase = useFirebase();
-    const firebaseData = useSelector(state => state.firebase.data);
-    useEffect(() => {
-        if (!firebaseData.games) {
-            firebase.set('games', {})
-        };
-    }, [firebaseData]);
+    // const firebase = useFirebase();
+    // const firebaseData = useSelector(state => state.firebase.data);
+    // useEffect(() => {
+    //     if (!firebaseData.games) {
+    //         firebase.set('games', {})
+    //     };
+    // }, [firebaseData]);
 
     const isMobile = useDeviceDetect();
 

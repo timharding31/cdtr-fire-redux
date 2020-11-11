@@ -2,10 +2,8 @@ import React from 'react';
 import CreateGame from './desktop/create_game';
 import Game from './desktop/game';
 import { Link, Route } from 'react-router-dom';
-import { useFirebaseConnect } from 'react-redux-firebase';
 
 const DesktopApp = () => {
-    useFirebaseConnect('games');
     return (
         <>
             <Route exact path="/" >
