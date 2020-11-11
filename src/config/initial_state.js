@@ -144,47 +144,47 @@ export const createGameState = (pin) => ({
     pin,
     status: "Waiting for players",
     users: {
-        allUsers: {},
-        players: [],
-        spectators: [],
-        currentPlayer: null,
-        target: null
+        allUsers: '',
+        players: '',
+        spectators: '',
+        currentPlayer: '',
+        target: ''
     },
     hands: {
-        liveCards: {},
-        deadCards: {},
-        coins: null
+        liveCards: '',
+        deadCards: '',
+        coins: ''
     },
     court: {
-        treasury: null,
-        courtDeck: []
+        treasury: 50,
+        courtDeck: ''
     },
     turns: {
         currentTurn: {
             action: {
-                playerChoice: null,
-                wasBlocked: null,
-                wasChallenged: null,
-                wasAllowed: null,
-                wasSuccessful: null,
-                isComplete: null,
-                target: null,
-                challenger: null,
-                blocker: null,
-                actionLoserCardIndex: null,
-                exchangeReturnIndices: []
+                playerChoice: '',
+                wasBlocked: '',
+                wasChallenged: '',
+                wasAllowed: '',
+                wasSuccessful: '',
+                isComplete: '',
+                target: '',
+                challenger: '',
+                blocker: '',
+                actionLoserCardIndex: '',
+                exchangeReturnIndices: ''
             },
             challenge: {
-                challenger: null,
+                challenger: '',
                 challengee: {
-                    name: null,
-                    hasCard: null,
-                    cardIndex: null
+                    name: '',
+                    hasCard: '',
+                    cardIndex: ''
                 },
-                actionChallenged: null,
-                challengeLoserCardIndex: []
+                actionChallenged: '',
+                challengeLoserCardIndex: ''
             }
         },
-        previousTurns: []
+        previousTurns: ''
     }
 });
