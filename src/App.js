@@ -1,22 +1,20 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useFirebase, useFirebaseConnect } from 'react-redux-firebase';
-import { constantState } from './config/initial_state';
 import './App.css';
 import { useDeviceDetect } from './util/hooks';
 import DesktopApp from './components/desktop';
 import MobileApp from './components/mobile';
 
 const App = () => {
-    useFirebaseConnect('constant');
+    useFirebaseConnect('games');
     const firebase = useFirebase();
-    const constantData = useSelector(state => state.firebase.data.constant);
+    const firebaseData = useSelector(state => state.firebase.data);
     useEffect(() => {
-        if (JSON.stringify(constantData) === '{}') {
-            firebase.set('constant', constantState);
-            firebase.set('games', {});
-        }
-    }, [firebase, constantData]);
+        if (!firebaseData.games) {
+            firebase.set('games', {})
+        };
+    }, [firebaseData]);
 
     const isMobile = useDeviceDetect();
 

@@ -15,4 +15,4 @@ const MobileApp = () => {
     )
 };
 
-export default MobileApp;
+export default MobileApp

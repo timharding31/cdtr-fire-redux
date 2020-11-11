@@ -4,16 +4,19 @@ import './index.css';
 import firebase from 'firebase/app';
 import 'firebase/database';
 import 'firebase/storage';
+import 'firebase/auth';
 import App from './App';
 import { ReactReduxFirebaseProvider, firebaseReducer } from 'react-redux-firebase';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import * as serviceWorker from './serviceWorker';
+import { staticReducer } from './util/reducers';
 import { combineReducers, createStore, applyMiddleware } from 'redux';
 import logger from "redux-logger";
 
 const rootReducer = combineReducers({
-    firebase: firebaseReducer
+    firebase: firebaseReducer,
+    staticData: staticReducer
 });
 
 const store = createStore(rootReducer, {}, applyMiddleware(logger));
@@ -31,6 +34,11 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 firebase.database();
 firebase.storage();
+firebase.auth().signInAnonymously().catch(function (error) {
+    var errorCode = error.code;
+    var errorMessage = error.message;
+    alert(errorCode, errorMessage);
+});
 
 const firebaseReactReduxProps = {
     firebase,

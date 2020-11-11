@@ -6,16 +6,16 @@ import { useFirebaseConnect } from 'react-redux-firebase';
 
 const DesktopApp = () => {
     useFirebaseConnect('games');
-    return(
+    return (
         <>
-        <Route exact path="/" >
-        <p>desktop app launched</p>
-        <Link to="/new">Create Game</Link>
-        </Route>
-        <Route exact path="/new" component={CreateGame} />
-        <Route path="/game/:gamePIN" component={Game} />
+            <Route exact path="/" >
+                <p>desktop app launched</p>
+                <Link to="/new">Create Game</Link>
+            </Route>
+            <Route exact path="/new" component={CreateGame} />
+            <Route path="/game/:gamePIN" component={Game} />
         </>
     )
 }
 
-export default DesktopApp;
+export default DesktopApp
