@@ -14,10 +14,11 @@ const Game = () => {
         if (allGames) setGame(allGames[gamePIN])
     }, [allGames, gamePIN]);
 
-    const deal = (e) => {
+    const startGame = (e) => {
         e.preventDefault();
         let players = Object.values(game.users.players);
         dealHands({ firebase, gamePIN, players});
+        firebase.database().ref('games/' + gamePIN + '/status').set('In progress');
     }
 
     if (game) {
@@ -29,7 +30,7 @@ const Game = () => {
             <ul>Players ({players.length}/6)
                 {players.map((player,idx) => <li key={`player-${idx}`}>{player}</li>)}
             </ul>
-            <button onClick={deal}>Deal</button>
+            {(game.status === 'Waiting for players' && players) ? <button onClick={startGame}>Start Game</button> : null}
             </>
         )
     } else {

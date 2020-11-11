@@ -10,7 +10,7 @@ const MobileApp = () => {
         <>
             <Route exact path="/" component={() => <Redirect to="/join" />} />
             <Route exact path="/join" component={JoinGame} />
-            <Route path="/game/:gamePIN" component={Game} />
+            <Route path="/game/:gamePIN/:userKey" component={Game} />
         </>
     )
 };

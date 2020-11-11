@@ -10,6 +10,7 @@ const JoinGame = () => {
     const [pinMatch, setPinMatch] = useState(false);
     const [duplicateUsername, setDuplicateUsername] = useState(false);
     const [username, setUsername] = useState('');
+    const [userKey, setUserKey] = useState('');
     const [joined, setJoined] = useState(false);
     const [error, setError] = useState('');
 
@@ -47,10 +48,13 @@ const JoinGame = () => {
         } else if (pinMatch) {
             const gamePath = '/games/' + userPin + '/users/';
             const newUserKey = firebase.database().ref(gamePath).push().key;
-            const updates = {
-                [gamePath + '/allUsers/' + newUserKey]: username,
-                [gamePath + '/players/' + newUserKey]: username
-            };
+            setUserKey(newUserKey);
+            let updates = { [gamePath + '/allUsers/' + newUserKey]: username };
+            if (games[userPin].status === 'Waiting for players') {
+                updates[gamePath + '/players/' + newUserKey] = username;
+            } else {
+                updates[gamePath + '/spectators/' + newUserKey] = username;
+            }
             firebase.database().ref().update(updates, (err) => {
                 if (err) {
                     setError(err);
@@ -67,7 +71,7 @@ const JoinGame = () => {
     }
 
     if (joined) {
-        return <Redirect to={"/game/" + userPin} />
+        return <Redirect to={"/game/" + userPin + "/" + userKey} />
     } else {
         return (
             <form onSubmit={joinGame}>
