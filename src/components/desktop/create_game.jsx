@@ -3,6 +3,7 @@ import { useFirebase } from 'react-redux-firebase';
 import { useSelector } from 'react-redux';
 import { createGameState } from '../../config/initial_state';
 import { Redirect } from 'react-router-dom';
+import { setupCourtDeck } from '../../util/game_setup';
 
 const CreateGame = () => {
     const firebase = useFirebase();
@@ -15,6 +16,14 @@ const CreateGame = () => {
     }
     const newGameState = createGameState(randomPIN);
     firebase.database().ref('games/' + randomPIN).set(newGameState);
+    setupCourtDeck({ firebase, gamePIN: randomPIN });
+    // ['ambassador', 'assassin', 'captain', 'contessa', 'duke'].forEach(character => {
+    //     [1,2,3].forEach(number => {
+    //         let courtDeckPath = gamePath + '/court/courtDeck/'
+    //         let newCardKey = firebase.database().ref(courtDeckPath).push().key;
+    //         firebase.database().ref(courtDeckPath + newCardKey).set(character);
+    //     });
+    // });
     return (
         <Redirect to={"/game/" + randomPIN} />
     )
