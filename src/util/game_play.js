@@ -66,7 +66,8 @@ export const exchangePartOne = ({ firebase, player, gamePIN }) => {
 };
 
 export const exchangePartTwo = ({ firebase, player, gamePIN, cardKeys }) => {
-    let allHandsRef = firebase.database().ref('games/' + gamePIN + '/hands');
+    let gameRef = firebase.database().ref('games/' + gamePIN);
+    let allHandsRef = gameRef.child('hands');
     let courtDeckRef = gameRef.child('court/courtDeck');
     allHandsRef.child('liveCards/' + player).once('value', snapshot => {
         let playerHand = snapshot.val();

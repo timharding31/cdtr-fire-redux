@@ -11,7 +11,7 @@ export const setupCourtDeck = ({ firebase, gamePIN }) => {
 export const dealHands = ({ firebase, players, gamePIN }) => {
     let courtDeckRef = firebase.database().ref('games/' + gamePIN + '/court/courtDeck');
     courtDeckRef.once('value', snapshot => {
-        [0,1].forEach(_ => {
+        [1,2].forEach(_ => {
             players.forEach(player => {
                 let courtDeck = snapshot.val();
                 let courtDeckKeys = Object.keys(courtDeck);

@@ -11,7 +11,7 @@ const Game = () => {
     const { gamePIN } = useParams();
     const allGames = useSelector(state => state.firebase.data.games);
     useEffect(() => {
-        if (allGames) setGame(allGames[gamePIN])
+        if (allGames) setGame(allGames[gamePIN]);
     }, [allGames, gamePIN]);
 
     const startGame = (e) => {
@@ -26,12 +26,12 @@ const Game = () => {
         let players = Object.values(game.users.players);
         return (
             <>
-            <div>Game PIN is {game.pin}</div>
-            <p>Status: {game.status}</p>
-            <ul>Players ({players.length}/6)
-                {players.map((player,idx) => <li key={`player-${idx}`}>{player}</li>)}
-            </ul>
-            {(game.status === 'Waiting for players' && players) ? <button onClick={startGame}>Start Game</button> : null}
+                <div>Game PIN is {game.pin}</div>
+                <p>Status: {game.status}</p>
+                <ul>Players ({players.length}/6)
+                    {players.map((player,idx) => <li key={`player-${idx}`}>{player}</li>)}
+                </ul>
+                {(game.status === 'Waiting for players' && players) ? <button onClick={startGame}>Start Game</button> : null}
             </>
         )
     } else {

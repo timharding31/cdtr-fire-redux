@@ -13,7 +13,8 @@ const FaceUpCard = ({
     image,
     name,
     symbol,
-    type
+    type,
+    numCards
 }) => {
     const firebase = useFirebase();
     const firebaseRef = firebase.storage().ref();
@@ -30,6 +31,8 @@ const FaceUpCard = ({
     const StyledCard = styled.div(({ width, height }) => ({
         width,
         height,
+        maxWidth: width,
+        maxHeight: height,
         position: `relative`,
         border: `1px solid ${cdt.black}`,
         borderRadius: `20px`,
@@ -116,9 +119,15 @@ const FaceUpCard = ({
         zIndex: '0',
         writingMode: 'vertical-lr',
     }));
+    let cardWidth = '100%';
+    let cardHeight = '35vh';
+    if (numCards > 2) {
+        cardHeight = '20vh';
+    }
+    console.log('numcards is ', numCards);
 
     return (
-        <StyledCard width={'240px'} height={'336px'}>
+        <StyledCard width={cardWidth} height={cardHeight}>
             <div style={cardTintStyle} />
             <CardHeader color={'#4C9870'}>{name}</CardHeader>
             <img id={`img-${cardId}`} style={cardImageStyle} />
