@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { dealHands, dealCoins } from '../../util/game_setup';
 import { useFirebase } from 'react-redux-firebase';
+import Button from '../resusable/button';
 
 const Game = () => {
     const firebase = useFirebase();
@@ -31,7 +32,7 @@ const Game = () => {
                 <ul>Players ({players.length}/6)
                     {players.map((player,idx) => <li key={`player-${idx}`}>{player}</li>)}
                 </ul>
-                {(game.status === 'Waiting for players' && players) ? <button onClick={startGame}>Start Game</button> : null}
+                {(game.status === 'Waiting for players' && players) ? <Button color={'blue'} text={'Start Game'} fontSize={'18px'} onClick={startGame} /> : null}
             </>
         )
     } else {

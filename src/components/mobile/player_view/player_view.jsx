@@ -2,6 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import FaceUpCard from './card';
+import Button from '../../resusable/button';
 
 const PlayerView = ({ game, player, liveCards, coins }) => {
     const cardData = useSelector(state => state.staticData.cards);
@@ -92,6 +93,7 @@ const PlayerView = ({ game, player, liveCards, coins }) => {
                         <p>Coins: {coins}</p>
                         <p>Influence: {liveCards.length}</p>
                 </PlayerFooter>
+                <Button color={'blue'} onClick={() => console.log('button')} text={'button'} fontSize={'18px'} />
             </PlayerBackground>
         </PlayerRoot>
     )
