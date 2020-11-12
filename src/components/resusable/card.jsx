@@ -19,6 +19,14 @@ const Card = ({ cardWidth, cardHeight, character, faceUp=true, cardKey }) => {
             symbol
         } = cardData[character];
 
+        const colorMatch = {
+            ambassador: cdt.green,
+            assassin: cdt.black,
+            captain: cdt.blue,
+            contessa: cdt.red,
+            duke: cdt.purple
+        }
+
         firebaseRef.child(image).getDownloadURL().then(url => {
             document.getElementById(`img-${cardKey}`).src = url;
         });
@@ -97,7 +105,8 @@ const Card = ({ cardWidth, cardHeight, character, faceUp=true, cardKey }) => {
             zIndex: '2',
             boxSizing: 'border-box',
             opacity: '90%',
-            listStyle: 'none'
+            listStyle: 'none',
+            visibility: `${Number(cardHeight.substring(0, 2)) < 35 ? 'hidden': 'visible'}`
         };
 
         const cardAbilitiesListItemStyle = {
@@ -107,11 +116,11 @@ const Card = ({ cardWidth, cardHeight, character, faceUp=true, cardKey }) => {
             textIndent: '-5%',
             padding: '0',
             margin: '0',
-            textShadow: `0.25px 0.25px 0px ${cdt.whiteShadow}`,
+            textShadow: `0.25px 0.25px 1px ${cdt.white}`
         }
 
-        const CardHeader = styled.div(({ color }) => ({
-            color,
+        const CardHeader = styled.h2(() => ({
+            color: colorMatch[character],
             position: 'absolute',
             transform: 'rotate(180deg)',
             margin: '0',
@@ -120,11 +129,11 @@ const Card = ({ cardWidth, cardHeight, character, faceUp=true, cardKey }) => {
             top: '5%',
             bottom: 'auto',
             left: 'auto',
-            fontSize: '285%',
+            fontSize: `${Number(cardHeight.substring(0,2))/7}vh`,
             textShadow: `0.25px 0.25px 0.5px ${cdt.blackShadow}`,
             fontWeight: '700',
             zIndex: '0',
-            writingMode: 'vertical-lr',
+            writingMode: 'vertical-lr'
         }));
 
         return (
