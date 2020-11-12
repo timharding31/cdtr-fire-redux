@@ -53,7 +53,7 @@ const PlayerView = ({ game, player, liveCards, coins }) => {
         maxWidth: '75%',
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'flex-end',
+        justifyContent: 'space-evenly',
         alignItems: 'center',
         boxSizing: 'border-box',
         padding: '15% 0 15% 0'
