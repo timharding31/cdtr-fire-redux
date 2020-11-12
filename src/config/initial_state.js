@@ -5,8 +5,8 @@ export const constantState = {
             image: 'characterImages/ambassador.png',
             symbol: 'characterSymbols/ambassador.png',
             action: "Exchange",
-            effect: "Exchange cards with Court Deck",
-            counteraction: "Blocks stealing",
+            effect: "Exchange",
+            counteraction: "Blocks Stealing",
             brushStroke: 'characterBrushStrokes/ambassador.png',
             backgroundColor: "rgba(76, 152, 112, 0.5)"
         },
@@ -15,7 +15,7 @@ export const constantState = {
             image: 'characterImages/assassin.png',
             symbol: 'characterSymbols/assassin.png',
             action: "Assassinate",
-            effect: "Pay 3 coins to assassinate another player",
+            effect: "Assassinate",
             counteraction: "",
             brushStroke: 'characterBrushStrokes/assassin.png',
             backgroundColor: "rgba(22, 28, 29, 0.5)"
@@ -25,8 +25,8 @@ export const constantState = {
             image: 'characterImages/captain.png',
             symbol: 'characterSymbols/captain.png',
             action: "Steal",
-            effect: "Take 2 coins from another player",
-            counteraction: "Blocks stealing",
+            effect: "Steal",
+            counteraction: "Blocks Stealing",
             brushStroke: 'characterBrushStrokes/captain.png',
             backgroundColor: "rgba(55, 97, 113, 0.5)"
         },
@@ -45,7 +45,7 @@ export const constantState = {
             image: 'characterImages/duke.png',
             symbol: 'characterSymbols/duke.png',
             action: "Tax",
-            effect: "Take 3 coins from Treasury",
+            effect: "Tax",
             counteraction: "Blocks Foreign Aid",
             brushStroke: 'characterBrushStrokes/duke.png',
             backgroundColor: "rgba(138, 49, 123, 0.5)"

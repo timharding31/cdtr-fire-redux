@@ -1,12 +1,9 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
 import styled from 'styled-components';
-import FaceUpCard from './card';
-import Button from '../../resusable/button';
+// import Button from '../../resusable/button';
+import Card from '../../resusable/card';
 
 const PlayerView = ({ game, player, liveCards, coins }) => {
-    const cardData = useSelector(state => state.staticData.cards);
-
     const PlayerRoot = styled.div(() => ({
         position: 'absolute',
         top: 0, bottom: 0, right: 0, left: 0,
@@ -73,6 +70,10 @@ const PlayerView = ({ game, player, liveCards, coins }) => {
         boxSizing: 'border-box'
     }))
 
+    const numCards = Object.keys(liveCards).length;
+    const cardWidth = '100%';
+    const cardHeight = numCards > 2 ? '20vh' : '35vh';
+
 
     return (
         <PlayerRoot>
@@ -82,8 +83,8 @@ const PlayerView = ({ game, player, liveCards, coins }) => {
                     <p>{game.pin}</p>
                 </PlayerHeader>
                 <PlayerHand numCards={Object.keys(liveCards).length}>
-                    {Object.entries(liveCards).map(([cardId, character]) => (
-                        <FaceUpCard numCards={Object.keys(liveCards).length} cardId={cardId} {...cardData[character]} key={cardId} />
+                    {Object.entries(liveCards).map(([cardKey, character]) => (
+                        <Card cardKey={cardKey} character={character} key={cardKey} cardHeight={cardHeight} cardWidth={cardWidth} />
                     ))}
                 </PlayerHand>
                 <PlayerCoins>
@@ -93,7 +94,6 @@ const PlayerView = ({ game, player, liveCards, coins }) => {
                         <p>Coins: {coins}</p>
                         <p>Influence: {liveCards.length}</p>
                 </PlayerFooter>
-                <Button color={'blue'} onClick={() => console.log('button')} text={'button'} fontSize={'18px'} />
             </PlayerBackground>
         </PlayerRoot>
     )
