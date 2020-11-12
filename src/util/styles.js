@@ -1,0 +1,17 @@
+export const green = '#4C9870';
+export const red = '#9b332a';
+export const blue = '#376171';
+export const yellow = '#DAA641';
+export const purple = '#8A317B';
+export const black = '#161C1D';
+export const white = '#FFFDF4';
+export const blueGray = 'rgba(47, 80, 92, 0.5)';
+export const blueGrayBorder = 'rgba(30, 45, 50, 0.6)';
+export const blueGrayModal = 'rgba(55, 97, 113, 0.5)';
+export const blackShadow = 'rgba(22, 28, 29, 0.75)';
+export const blackModal = 'rgba(22, 28, 29, 0.4)';
+export const blackTooltip = 'rgba(22, 28, 29, 0.9)';
+export const whiteShadow = 'rgba(255, 253, 244, 0.75)';
+export const redShadow = 'rgba(155, 51, 42, 0.25)';
+export const blueShadow = 'rgba(55, 97, 113, 0.25)';
+export const slideShadow = 'rgba(47, 80, 92, 0.05)';

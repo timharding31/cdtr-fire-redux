@@ -171,18 +171,18 @@ export const createGameState = (pin) => ({
                 target: '',
                 challenger: '',
                 blocker: '',
-                actionLoserCardIndex: '',
-                exchangeReturnIndices: ''
+                loserCardKey: '',
+                exchangeReturnKeys: ''
             },
             challenge: {
                 challenger: '',
                 challengee: {
                     name: '',
                     hasCard: '',
-                    cardIndex: ''
+                    cardKey: ''
                 },
-                actionChallenged: '',
-                challengeLoserCardIndex: ''
+                loser: '',
+                loserCardKey: ''
             }
         },
         previousTurns: ''
