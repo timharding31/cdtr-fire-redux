@@ -5,14 +5,13 @@ import { useEffect } from 'react';
 import PlayerView from './player_view/player_view';
 
 const Game = () => {
-    const [game, setGame] = useState(false);
     const [player, setPlayer] = useState(false);
     const { gamePIN, userKey } = useParams();
-    const allGames = useSelector(state => state.firebase.data.games);
-    useEffect(() => {
-        if (allGames && !game) setGame(allGames[gamePIN]);
-        
-    }, [allGames, gamePIN, game]);
+    const game = useSelector(state => {
+        const allGames = state.firebase.data.games
+        if (allGames && gamePIN in allGames) return allGames[gamePIN];
+    });
+
     useEffect(() => {
         if (game && userKey) setPlayer(game.users.allUsers[userKey]);
     }, [game, userKey, player]);
@@ -21,7 +20,7 @@ const Game = () => {
         return (
             <>
                 <div>Game PIN is {game.pin}, username is {player}</div>
-                {game.status === 'In progress' ? <PlayerView game={game} coins={game.hands.coins[player]} player={player} liveCards={game.hands.liveCards[player]} /> : null}
+                <PlayerView game={game} coins={game.hands.coins[player]} player={player} liveCards={game.hands.liveCards[player]} />
             </>
         )
     } else {
