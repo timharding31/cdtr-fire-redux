@@ -51,8 +51,9 @@ const Card = ({ cardWidth, cardHeight, character, faceUp=true, cardKey }) => {
             borderRadius: `20px`,
             overflow: `hidden`,
             backgroundRepeat: `repeat`,
-            boxShadow: `0 0 10px ${cdt.blackShadow}`,
+            boxShadow: `0 0 10px 1px ${cdt.blackShadow}`,
             transition: `all .2s ease-in-out`,
+            margin: '1px 0'
         }));
 
         const cardTintStyle = {

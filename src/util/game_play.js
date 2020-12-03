@@ -1,3 +1,37 @@
+export const startTurn = ({ firebase, playerKey, gamePIN, playerChoice, targetKey }) => {
+  let turnsRef = firebase.database().ref('games/' + gamePIN + '/turns');
+  let currentTurn = turnsRef.child('currentTurn');
+  const newTurn = {
+    blocker: '',
+    challenger: '',
+    exchangeReturnKeys: [],
+    isComplete: false,
+    loserCardKey: '',
+    playerChoice,
+    player: playerKey,
+    target: targetKey,
+    wasAllowed: null,
+    wasBlocked: null,
+    wasChallenged: null,
+    wasSuccessful: null,
+  };
+  currentTurn.child('action').update(newTurn);
+};
+
+export const endTurn = ({ firebase, gamePIN }) => {
+  let turnsRef = firebase.database().ref('games/' + gamePIN + '/turns');
+  let currentTurn = turnsRef.child('currentTurn');
+  let previousTurns = turnsRef.child('previousTurns');
+  currentTurn.once('value', snapshot => {
+    let endedTurn = snapshot.val();
+    endedTurn.action.isComplete = true;
+    let endedTurnKey = previousTurns.push().key;
+    previousTurns.update({ [endedTurnKey]: endedTurn });
+    currentTurn.update({ action: {}, challenge: {} });
+  });
+};
+
+
 export const loseInfluence = ({ firebase, player, gamePIN, cardKey }) => {
     let allHandsRef = firebase.database().ref('games/' + gamePIN + '/hands');
     let lostCardRef = allHandsRef.child('liveCards/' + player).child(cardKey);

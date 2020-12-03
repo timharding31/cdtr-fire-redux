@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { dealHands, dealCoins } from '../../util/game_setup';
+import { startTurn, endTurn } from '../../util/game_play';
 import { useFirebase } from 'react-redux-firebase';
 import Button from '../resusable/button';
 
@@ -23,16 +24,30 @@ const Game = () => {
         firebase.database().ref('games/' + gamePIN + '/status').set('In progress');
     }
 
+    const startTurnTest = e => {
+      e.preventDefault()
+      let playerKey = Object.keys(game.users.players)[0];
+      let targetKey = Object.keys(game.users.players)[1];
+      startTurn({ firebase, gamePIN, playerKey, targetKey, playerChoice: 'Income' });
+    };
+
+    const endTurnTest = e => {
+      e.preventDefault();
+      endTurn({ firebase, gamePIN });
+    };
+
     if (game) {
-        let players = Object.values(game.users.players);
+        let players = Object.entries(game.users.players);
         return (
             <>
                 <div>Game PIN is {game.pin}</div>
                 <p>Status: {game.status}</p>
                 <ul>Players ({players.length}/6)
-                    {players.map((player,idx) => <li key={`player-${idx}`}>{player}</li>)}
+                    {players.map(([key, player]) => <li key={`player-${key}`}>{player}</li>)}
                 </ul>
                 {(game.status === 'Waiting for players' && players) ? <Button color={'blue'} text={'Start Game'} fontSize={'18px'} onClick={startGame} /> : null}
+              {(game.status === 'In progress' && players) ? <Button color={'red'} text={'Start Turn'} fontSize={'18px'} onClick={startTurnTest} /> : null}
+              {(game.status === 'In progress' && players) ? <Button color={'green'} text={'End Turn'} fontSize={'18px'} onClick={endTurnTest} /> : null}
             </>
         )
     } else {
