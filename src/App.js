@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useFirebase, useFirebaseConnect } from 'react-redux-firebase';
 import './App.css';
-import { useDeviceDetect } from './util/hooks';
+import { useDeviceDetect } from './util/hooks/';
 import DesktopApp from './components/desktop';
 import MobileApp from './components/mobile';
 

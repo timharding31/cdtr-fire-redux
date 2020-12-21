@@ -1,6 +1,6 @@
 import React from 'react';
 import CreateGame from './desktop/create_game';
-import Game from './desktop/game';
+import GameContainer from './desktop/game_container';
 import { Link, Route } from 'react-router-dom';
 
 const DesktopApp = () => {
@@ -11,7 +11,7 @@ const DesktopApp = () => {
                 <Link to="/new">Create Game</Link>
             </Route>
             <Route exact path="/new" component={CreateGame} />
-            <Route path="/game/:gamePIN" component={Game} />
+            <Route path="/game/:gamePIN" component={GameContainer} />
         </>
     )
 }
