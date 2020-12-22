@@ -1,10 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
-// import Button from '../../resusable/button';
 import Card from '../../resusable/card';
 import Coin from '../../resusable/coin';
+import TurnSelector from './turn_selector';
 
-const PlayerView = ({ game, player, liveCards, coins }) => {
+const PlayerView = ({ game, coins, playerName, playerKey, isCurrentPlayer, liveCards }) => {
     if (game.status === 'Waiting for players') {
         return null
     }
@@ -86,8 +86,12 @@ const PlayerView = ({ game, player, liveCards, coins }) => {
         <PlayerRoot>
             <PlayerBackground>
                 <PlayerHeader>
-                    <p>{player}</p>
+                    <p>{playerName}</p>
                     <p>{game.pin}</p>
+                    <TurnSelector
+                      isCurrentPlayer={isCurrentPlayer}
+                      players={game.users.players}
+                    />
                 </PlayerHeader>
                 <PlayerHand numCards={numCards}>
                     {Object.entries(liveCards).map(([cardKey, character]) => (

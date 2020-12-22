@@ -1,9 +1,8 @@
 import React from 'react';
 import Button from '../resusable/button';
 
-const Lobby = ({ status, pin, numPlayers, playerEntries, startGame, arePlayersJoined }) => {
+const Lobby = ({ status, pin, numPlayers, playerEntries, startGame, werePlayersFound }) => {
   const playerList = playerEntries.map(([key, player]) => <li key={key}>{player}</li>);
-
   return (
     <>
       <div>Game PIN is {pin}</div>
@@ -11,7 +10,7 @@ const Lobby = ({ status, pin, numPlayers, playerEntries, startGame, arePlayersJo
       <ul>Players ({numPlayers}/6)
         {playerList}
       </ul>
-      {arePlayersJoined ? <Button color={'blue'} text={'Start Game'} fontSize={'18px'} onClick={startGame} /> : null}
+      {werePlayersFound ? <Button color={'blue'} text={'Start Game'} fontSize={'18px'} onClick={startGame} /> : null}
     </>
   );
 }

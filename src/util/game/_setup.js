@@ -3,6 +3,8 @@ export const getGameRefs = (firebase, game) => {
   const gameRef = db.ref(`games/${game.pin}`);
   const refs = {
     gameRef,
+    allUsers: gameRef.child('users'),
+    allPlayers: gameRef.child('users/players'),
     allPlayerLiveCards: gameRef.child('hands/liveCards'),
     allPlayerDeadCards: gameRef.child('hands/deadCards'),
     allPlayerCoins: gameRef.child('hands/coins'),
@@ -34,18 +36,18 @@ export const dealCard = (deckRef, playerHandRef) => {
   });
 };
 
-export const dealCoins = (firebase, treasuryRef, playerCoinsRef, amt = 1) => {
-  treasuryRef.set(firebase.database.ServerValue.increment(-amt));
-  playerCoinsRef.set(amt);
+export const dealCoins = (treasuryRef, playerCoinsRef, amt=1) => {
+  treasuryRef.transaction(treasury => treasury - amt);
+  playerCoinsRef.transaction(coins => coins + amt);
 };
 
-export const startGame = (firebase, game) => {
+export const startGame = (firebase, game) => () => {
   const { courtDeck, treasury, status } = getGameRefs(firebase, game);
   const players = Object.values(game.users.players);
   [1, 2].forEach(_ => {
     players.forEach(player => {
       const { playerLiveCards, playerCoins } = getPlayerRefs(firebase, game, player);
-      dealCoins(firebase, treasury, playerCoins, 1);
+      dealCoins(treasury, playerCoins, 1);
       dealCard(courtDeck, playerLiveCards);
     });
   });

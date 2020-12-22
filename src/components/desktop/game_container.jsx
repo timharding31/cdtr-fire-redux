@@ -1,30 +1,37 @@
 import React from 'react';
 import { useFirebase } from 'react-redux-firebase';
-import { useGame, usePlayers } from '../../util/hooks';
+import { useGame, usePlayers, useGameFunctions, useCurrentPlayer, useTurn } from '../../util/hooks';
 import * as GameUtil from '../../util/game';
 import Lobby from './lobby';
 import GamePlay from './gameplay/';
 
 const GameContainer = () => {
-  const [game, isGameLoaded] = useGame();
-  const [{ playerEntries, playerKeys, playerNames, numPlayers }, arePlayersJoined] = usePlayers(game);
-  const firebase = useFirebase();
-  const startGame = () => GameUtil.startGame(firebase, game);
-  if (isGameLoaded) {
+  const { wasGameFound, game } = useGame();
+  const { werePlayersFound, players, numPlayers } = usePlayers();
+  const { startGame } = useGameFunctions();
+  const gameFunctions = useGameFunctions();
+  Object.entries(gameFunctions).forEach(([fnName, fn]) => {
+    window[fnName] = fn;
+  });
+  if (wasGameFound) {
     switch (game.status) {
       case 'Waiting for players':
         return (
-          <Lobby
-            {...game}
-            numPlayers={numPlayers}
-            playerEntries={playerEntries}
-            startGame={startGame}
-            arePlayersJoined={arePlayersJoined}
-          />
-        )
+          <>
+            <Lobby
+              {...game}
+              numPlayers={numPlayers}
+              playerEntries={players ? Object.entries(players) : []}
+              startGame={startGame}
+              werePlayersFound={werePlayersFound}
+            />
+          </>
+        );
       case 'In progress':
         return (
-          <GamePlay />
+          <>
+            <GamePlay players={Object.values(players)} numPlayers={numPlayers} />
+          </>
         )
       default:
         return null

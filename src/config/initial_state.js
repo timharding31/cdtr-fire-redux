@@ -147,8 +147,6 @@ export const createGameState = (pin) => ({
         allUsers: '',
         players: '',
         spectators: '',
-        currentPlayer: '',
-        target: ''
     },
     hands: {
         liveCards: '',

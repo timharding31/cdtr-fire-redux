@@ -1,9 +1,8 @@
-import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { useFirebase } from 'react-redux-firebase';
+import { useFirebase, isLoaded, isEmpty } from 'react-redux-firebase';
 import { createGameState } from '../../config/initial_state';
-
+import * as GameFunctions from '../game/';
 
 export const useNewGame = () => {
   const firebase = useFirebase();
@@ -27,144 +26,87 @@ export const useNewGame = () => {
       });
     });
   });
-  return gamePIN
+  return gamePIN;
 };
 
 export const useGame = () => {
-  const [game, setGame] = useState('');
   const { gamePIN } = useParams();
   const allGames = useSelector(state => state.firebase.data.games);
-  useEffect(() => {
-    if (allGames && gamePIN in allGames) setGame(allGames[gamePIN]);
-  }, [allGames, gamePIN, game]);
-  
-  if (game) {
-    return [game, true];
+
+  if (!isLoaded(allGames) || isEmpty(allGames[gamePIN])) {
+    return { wasGameFound: false, game: null };
   } else {
-    return [null, false];
+    return { wasGameFound: true, game: allGames[gamePIN] };
   }
 };
 
-export const usePlayers = (game) => {
-  const [players, setPlayers] = useState();
-  const [arePlayersJoined, setArePlayersJoined] = useState(false);
-  useEffect(() => {
-    if (game && game.users) setArePlayersJoined(true);
-  }, [game]);
+export const usePlayers = () => {
+  const { wasGameFound, game } = useGame();
 
-  useEffect(() => {
-    if (arePlayersJoined) setPlayers(game.users.players);
-  }, [game, arePlayersJoined]);
-  
-  if (arePlayersJoined && players) {
-    return [{
-      playerEntries: Object.entries(players),
-      playerKeys: Object.keys(players),
-      playerNames: Object.values(players),
-      numPlayers: Object.keys(players).length
-    }, true];
+  if (!wasGameFound || isEmpty(game.users) || isEmpty(game.users.players)) {
+    return { werePlayersFound: false, players: null, numPlayers: 0 };
   } else {
-    return [{
-      playerEntries: [],
-      playerKeys: [],
-      playerNames: [],
-      numPlayers: 0,
-    }, false];
+    return { werePlayersFound: true, players: game.users.players, numPlayers: Object.keys(game.users.players).length };
   }
 };
 
-export const usePlayer = (game) => {
-  const [player, setPlayer] = useState('');
+export const useCurrentPlayer = () => {
+  const { wasGameFound, game } = useGame();
+  const { werePlayersFound, players } = usePlayers();
+
+  if (!wasGameFound || !werePlayersFound || isEmpty(game.turns) || isEmpty(game.turns.currentPlayer)) {
+    return { wasCurrentPlayerFound: false, currentPlayerKey: null, currentPlayerName: null };
+  } else {
+    return { wasCurrentPlayerFound: true, currentPlayerKey: game.turns.currentPlayer, currentPlayerName: players[game.turns.currentPlayer] };
+  }
+};
+
+export const usePlayer = () => {
   const { userKey } = useParams();
-  useEffect(() => {
-    if (game && userKey) setPlayer(game.users.allUsers[userKey]);
-  }, [game, userKey, player]);
+  const { werePlayersFound, players } = usePlayers();
+  const { wasCurrentPlayerFound, currentPlayerKey } = useCurrentPlayer();
 
-  if (player) {
-    return [player, true];
+  if (!werePlayersFound) {
+    return { wasPlayerFound: false, isCurrentPlayer: false, playerName: null, playerKey: null };
+  } else if (!wasCurrentPlayerFound) {
+    return { wasPlayerFound: true, isCurrentPlayer: false, playerName: players[userKey], playerKey: userKey };
   } else {
-    return [null, false];
+    return { wasPlayerFound: true, isCurrentPlayer: Boolean(currentPlayerKey === userKey), playerName: players[userKey], playerKey: userKey };
   }
 };
 
-// export const useGameRefs = (game) => {
-//   const firebase = useFirebase();
-//   const db = firebase.database();
-//   const gameRef = db.ref(`games/${game.pin}`);
-//   const refs = {
-//     gameRef,
-//     allPlayerLiveCards: gameRef.child('hands/liveCards'),
-//     allPlayerDeadCards: gameRef.child('hands/deadCards'),
-//     allPlayerCoins: gameRef.child('hands/coins'),
-//     courtDeck: gameRef.child('court/courtDeck'),
-//     treasury: gameRef.child('court/treasury'),
-//   };
-//   return refs;
-// };
+export const useTurn = () => {
+  const { wasGameFound, game } = useGame();
+  const { wasCurrentPlayerFound } = useCurrentPlayer();
 
-// export const usePlayerRefs = (game, player) => {
-//   const { allPlayerLiveCards, allPlayerDeadCards, allPlayerCoins } = getGameRefs(game);
-//   const playerRefs = {
-//     playerLiveCards: allPlayerLiveCards.child(player),
-//     playerDeadCards: allPlayerDeadCards.child(player),
-//     playerCoins: allPlayerCoins.child(player)
-//   };
-//   return playerRefs;
-// };
+  if (!wasGameFound || game.status !== 'In progress' || !wasCurrentPlayerFound) {
+    return { isTurnActive: false, turnAction: null, turnChallenge: null };
+  } else {
+    return { isTurnActive: true, turnAction: game.turns.currentTurn.action, turnChallenge: game.turns.currentTurn.challenge };
+  }
+};
 
-// export const setupCourtDeck = () => {
-//   const { gamePIN } = useParams();
-//   const firebase = useFirebase();
-// // }
+export const useGameFunctions = () => {
+  const firebase = useFirebase();
+  const { game, wasGameFound } = useGame();
 
-
-// export const setupCourtDeck = ({ firebase, gamePIN }) => {
-//     ['ambassador', 'assassin', 'captain', 'contessa', 'duke'].forEach(character => {
-//         [1, 2, 3].forEach(_ => {
-//             let courtDeckPath = 'games/' + gamePIN + '/court/courtDeck/';
-//             let newCardKey = firebase.database().ref(courtDeckPath).push().key;
-//             firebase.database().ref(courtDeckPath + newCardKey).set(character);
-//         });
-//     });
-// };
-
-// export const dealHands = ({ firebase, players, gamePIN }) => {
-//     let courtDeckRef = firebase.database().ref('games/' + gamePIN + '/court/courtDeck');
-//     [1,2].forEach(_ => {
-//         players.forEach(player => {
-//             courtDeckRef.once('value', snapshot => {
-//                 let courtDeck = snapshot.val();
-//                 let courtDeckKeys = Object.keys(courtDeck);
-//                 let randomCardKey = courtDeckKeys[Math.floor(Math.random() * courtDeckKeys.length)];
-//                 let randomCard = courtDeck[randomCardKey];
-//                 courtDeckRef.child(randomCardKey).remove();
-//                 firebase.database().ref('games/' + gamePIN + '/hands/liveCards/' + player).update({ [randomCardKey]: randomCard })
-//             });
-//         });
-//     });
-// };
-
-// export const dealCoins = ({ firebase, players, gamePIN }) => {
-//     let treasuryRef = firebase.database().ref('games/' + gamePIN + '/court/treasury');
-//     players.forEach(player => {
-//         treasuryRef.set(firebase.database.ServerValue.increment(-2));
-//         firebase.database().ref('games/' + gamePIN + '/hands/coins/' + player).set(2);
-//     });
-// };
-
-// // export const dealPlayers = ({ firebase, players, gamePIN }) => {
-// //   const gameRef = firebase.database().ref(`games/${gamePIN}`);
-// //   const courtRef = gameRef.child('court');
-// //   const handsRef = gameRef.child('hands/liveCards');
-// //   const [deckRef, treasuryRef] = ['courtDeck', 'treasury'].map(ref => courtRef.child(ref));
-// //   const dealPlayerCard = player => {
-// //     deckRef.once('value', snapshot => {
-// //       const courtDeck = snapshot.val();
-// //       const courtDeckKeys = Object.keys(courtDeck);
-// //       const randomCardKey = courtDeckKeys[Math.floor(Math.random() * courtDeck.length)];
-// //       const randomCard = { ...courtDeck[randomCardKey] }
-// //       courtDeck.child(randomCardKey).remove();
-// //       handsRef.child(player).update(randomCard);
-// //     })
-// //   }
-// // }
+  if (!wasGameFound) {
+    return {};
+  } else {
+    return {
+      startGame: GameFunctions.startGame(firebase, game),
+      loseInfluence: GameFunctions.loseInfluence(firebase, game),
+      returnReshuffledInfluence: GameFunctions.returnInfluence(firebase, game, 'reshuffle'),
+      returnExchangedInfluence: GameFunctions.returnInfluence(firebase, game, 'exchange'),
+      payForCoup: GameFunctions.payCoins(firebase, game, 7),
+      payForAssassination: GameFunctions.payCoins(firebase, game, 3),
+      receiveFromIncome: GameFunctions.receiveCoins(firebase, game, 1),
+      receiveFromForeignAid: GameFunctions.receiveCoins(firebase, game, 2),
+      receiveFromTax: GameFunctions.receiveCoins(firebase, game, 3),
+      exchangePartOne: GameFunctions.exchangePartOne(firebase, game),
+      stealCoins: GameFunctions.stealCoins(firebase, game),
+      startTurn: GameFunctions.startTurn(firebase, game),
+      endTurn: GameFunctions.endTurn(firebase, game),
+    };
+  }
+};

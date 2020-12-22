@@ -14,6 +14,35 @@ import * as serviceWorker from './serviceWorker';
 import { combineReducers, createStore, applyMiddleware } from 'redux';
 import logger from "redux-logger";
 
+// const turnReducer = (state={ currentPlayer: null, turnOrder: [] }, { type, player }) => {
+//   const newState = {...state};
+//   const playerIdx = newState.turnOrder.indexOf(player);
+//   const currentPlayerIdx = newState.turnOrder.indexOf(newState.currentPlayer);
+//   const numPlayers = newState.turnOrder.length;
+//   switch (type) {
+//     case 'add-player':
+//       if (newState.turnOrder.includes(player)) {
+//         return state;
+//       } else {
+//         newState.turnOrder = [...newState.turnOrder, player];
+//         if (!newState.currentPlayer) newState.currentPlayer = player;
+//         return newState;
+//       }
+//     case 'remove-player':
+//       if (newState.turnOrder.includes(player)) {
+//         newState.turnOrder.splice(playerIdx, 1);
+//         return newState;
+//       } else {
+//         return state;
+//       }
+//     case 'end-turn':
+//       newState.currentPlayer = newState.turnOrder[(currentPlayerIdx + 1) % numPlayers];
+//       return newState;
+//     default:
+//       return state;
+//   }
+// }
+
 const rootReducer = combineReducers({
     firebase: firebaseReducer,
     staticData: (state={ ...constantState }) => state
