@@ -1,28 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import React from 'react';
 import { useGame, usePlayer } from '../../util/hooks';
-import PlayerView from './player_view/player_view';
+import GamePlay from './gameplay/';
 
 const Game = () => {
   const { wasGameFound, game } = useGame();
-  const { wasPlayerFound, isCurrentPlayer, playerName, playerKey } = usePlayer();
+  const { wasPlayerFound } = usePlayer();
 
   if (wasGameFound && wasPlayerFound) {
-        return (
-            <>
-                <div>Game PIN is {game.pin}, username is {playerName}</div>
-                <p>{isCurrentPlayer ? 'It is your turn' : 'It is NOT your turn'}</p>
-                <PlayerView
-                  game={game}
-                  coins={game.hands.coins[playerName]}
-                  playerName={playerName}
-                  playerKey={playerKey}
-                  isCurrentPlayer={isCurrentPlayer}
-                  liveCards={game.hands.liveCards[playerName]}
-                />
-            </>
-        )
+    switch (game.status) {
+        case 'In progress':
+          return <GamePlay game={game} />
+        case 'Waiting for players':
+        default:
+          return null;
+      }
     } else {
         return <p>Loading</p>
     }

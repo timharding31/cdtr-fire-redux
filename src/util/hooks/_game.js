@@ -1,12 +1,14 @@
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { useFirebase, isLoaded, isEmpty } from 'react-redux-firebase';
+import { useFirebase, useFirebaseConnect, isLoaded, isEmpty } from 'react-redux-firebase';
 import { createGameState } from '../../config/initial_state';
 import * as GameFunctions from '../game/';
+import Game from '../../components/mobile/game';
 
 export const useNewGame = () => {
   const firebase = useFirebase();
   const db = firebase.database();
+  useFirebaseConnect('games/');
   const games = useSelector(state => state.firebase.data.games);
   let gamePIN = Math.floor(Math.random() * 8999 + 1000).toFixed();
   if (games) {
@@ -31,6 +33,7 @@ export const useNewGame = () => {
 
 export const useGame = () => {
   const { gamePIN } = useParams();
+  useFirebaseConnect(`games/${gamePIN}`);
   const allGames = useSelector(state => state.firebase.data.games);
 
   if (!isLoaded(allGames) || isEmpty(allGames[gamePIN])) {
@@ -61,28 +64,54 @@ export const useCurrentPlayer = () => {
   }
 };
 
-export const usePlayer = () => {
-  const { userKey } = useParams();
-  const { werePlayersFound, players } = usePlayers();
-  const { wasCurrentPlayerFound, currentPlayerKey } = useCurrentPlayer();
-
-  if (!werePlayersFound) {
-    return { wasPlayerFound: false, isCurrentPlayer: false, playerName: null, playerKey: null };
-  } else if (!wasCurrentPlayerFound) {
-    return { wasPlayerFound: true, isCurrentPlayer: false, playerName: players[userKey], playerKey: userKey };
-  } else {
-    return { wasPlayerFound: true, isCurrentPlayer: Boolean(currentPlayerKey === userKey), playerName: players[userKey], playerKey: userKey };
-  }
-};
-
 export const useTurn = () => {
   const { wasGameFound, game } = useGame();
   const { wasCurrentPlayerFound } = useCurrentPlayer();
 
-  if (!wasGameFound || game.status !== 'In progress' || !wasCurrentPlayerFound) {
+  if (!wasGameFound || game.status !== 'In progress' || !wasCurrentPlayerFound || !game.turns.currentTurn) {
     return { isTurnActive: false, turnAction: null, turnChallenge: null };
   } else {
-    return { isTurnActive: true, turnAction: game.turns.currentTurn.action, turnChallenge: game.turns.currentTurn.challenge };
+    return {
+      isTurnActive: true,
+      turn: game.turns.currentTurn
+    };
+  }
+};
+
+export const useCurrentTarget = () => {
+  const { isTurnActive, turn } = useTurn();
+
+  if (!isTurnActive) {
+    return 'nobody';
+  } else {
+    return turn.targetKey;
+  }
+};
+
+export const usePlayer = () => {
+  const { userKey } = useParams();
+  const { werePlayersFound, players } = usePlayers();
+  const { wasCurrentPlayerFound, currentPlayerKey } = useCurrentPlayer();
+  const currentTarget = useCurrentTarget();
+
+  if (!werePlayersFound) {
+    return { wasPlayerFound: false, isCurrentPlayer: false, isCurrentTarget: false, playerName: null, playerKey: null };
+  } else if (!wasCurrentPlayerFound) {
+    return {
+      wasPlayerFound: true,
+      isCurrentPlayer: false,
+      isCurrentTarget: false,
+      playerName: players[userKey],
+      playerKey: userKey
+    };
+  } else {
+    return {
+      wasPlayerFound: true,
+      isCurrentPlayer: Boolean(currentPlayerKey === userKey),
+      isCurrentTarget: Boolean(currentTarget === players[userKey]),
+      playerName: players[userKey],
+      playerKey: userKey
+    };
   }
 };
 
@@ -106,7 +135,23 @@ export const useGameFunctions = () => {
       exchangePartOne: GameFunctions.exchangePartOne(firebase, game),
       stealCoins: GameFunctions.stealCoins(firebase, game),
       startTurn: GameFunctions.startTurn(firebase, game),
-      endTurn: GameFunctions.endTurn(firebase, game),
+      switchTurns: GameFunctions.switchTurns(firebase,game),
+      allowAction: GameFunctions.allowAction(firebase,game),
+      challengeAction: GameFunctions.challengeAction(firebase,game),
+      blockAction: GameFunctions.blockAction(firebase,game),
+      challengeBlock: GameFunctions.challengeBlock(firebase,game),
+      allowBlock: GameFunctions.allowBlock(firebase,game),
+      submitChallengeLossChoice: GameFunctions.submitChallengeLossChoice(firebase,game),
+      challengeOutcome: GameFunctions.challengeOutcome(firebase,game),
+      submitKillChoice: GameFunctions.submitKillChoice(firebase,game),
+      submitExchangeChoices: GameFunctions.submitExchangeChoices(firebase,game),
+      actionOutcome: GameFunctions.actionOutcome(firebase,game),
     };
   }
 };
+
+// export const useTurnLoop = () => {
+//   const { game } = useGame();
+//   const { currentTurn, currentPlayer } = useSelector(state => state.firebase.data.games[game.pin].turns);
+
+// };

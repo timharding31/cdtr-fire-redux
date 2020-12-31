@@ -30,9 +30,10 @@ const PlayerView = ({ game, coins, playerName, playerKey, isCurrentPlayer, liveC
         height: '10%',
         boxSizing: 'border-box',
         display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'baseline'
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        zIndex: 100
     }));
 
     const PlayerFooter = styled.div(() => ({
@@ -86,11 +87,12 @@ const PlayerView = ({ game, coins, playerName, playerKey, isCurrentPlayer, liveC
         <PlayerRoot>
             <PlayerBackground>
                 <PlayerHeader>
-                    <p>{playerName}</p>
-                    <p>{game.pin}</p>
+                  <div className="player-header-information">
+                  </div>
                     <TurnSelector
                       isCurrentPlayer={isCurrentPlayer}
                       players={game.users.players}
+                      playerKey={playerKey}
                     />
                 </PlayerHeader>
                 <PlayerHand numCards={numCards}>

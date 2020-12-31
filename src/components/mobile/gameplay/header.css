@@ -1,0 +1,12 @@
+.player-header {
+    position: absolute;
+    top: 0; bottom: auto; left: 0; right: 0;
+    width: 100%;
+    height: auto;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    z-index: 100;
+}

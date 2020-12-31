@@ -35,8 +35,19 @@ const DesktopApp = () => {
           <p>{`returnExchangedInfluence = (player, cardKey) => { ... }`}</p>
           <p>{`returnReshuffledInfluence = (player, cardKey) => { ... }`}</p>
           <p>{`startGame = () => { ... }`}</p>
-          <p>{`startTurn = (playerChoice, target="nobody") => { ... }`}</p>
           <p>{`stealCoins = (player, target) => { ... }`}</p>
+          <p>{`switchTurns = () => { ... }`}</p>
+          <p>{`startTurn = (playerKey, targetKey, playerChoice) => { ... }`}</p>
+          <p>{`allowAction = () => { ... }`}</p>
+          <p>{`challengeAction = (challengerKey) => { ... }`}</p>
+          <p>{`blockAction = (blockerKey) => { ... }`}</p>
+          <p>{`challengeBlock = () => { ... }`}</p>
+          <p>{`allowBlock = () => { ... }`}</p>
+          <p>{`submitChallengeLossChoice = (loserKey, cardKey) => { ... }`}</p>
+          <p>{`challengeOutcome = () => { ... }`}</p>
+          <p>{`submitKillChoice = (cardKey) => { ... }`}</p>
+          <p>{`submitExchangeChoices = (exchangedCardKeys) => { ... }`}</p>
+          <p>{`actionOutcome = () => { ... }`}</p>
         </li>
       </ul>
     </>

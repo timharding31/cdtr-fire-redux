@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useFirebase } from 'react-redux-firebase';
+import { useFirebase, useFirebaseConnect } from 'react-redux-firebase';
 import { useSelector } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 
 const JoinGame = () => {
   const firebase = useFirebase();
+  useFirebaseConnect('games/');
   const games = useSelector(state => state.firebase.data.games);
   const [userPin, setUserPin] = useState('');
   const [pinMatch, setPinMatch] = useState(false);
