@@ -158,31 +158,8 @@ export const createGameState = (pin) => ({
         courtDeck: ''
     },
     turns: {
-        currentTurn: {
-            action: {
-                playerChoice: '',
-                wasBlocked: '',
-                wasChallenged: '',
-                wasAllowed: '',
-                wasSuccessful: '',
-                isComplete: '',
-                target: '',
-                challenger: '',
-                blocker: '',
-                loserCardKey: '',
-                exchangeReturnKeys: ''
-            },
-            challenge: {
-                challenger: '',
-                challengee: {
-                    name: '',
-                    hasCard: '',
-                    cardKey: ''
-                },
-                loser: '',
-                loserCardKey: ''
-            }
-        },
+        currentTurn: { status: 'playerChoosing' },
+        currentPlayer: '',
         previousTurns: ''
     }
 });

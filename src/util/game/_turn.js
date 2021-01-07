@@ -2,28 +2,16 @@ import { newBlankTurn } from '../../config/new_turn';
 import { payCoins, loseInfluence, returnInfluence, stealCoins, receiveCoins, exchangePartOne } from './_gameplay';
 import { getTurnRefs } from './_database';
 
-// const getTurnsRef = (firebase, game) => {
-//   const db = firebase.database();
-//   const gameRef = db.ref(`games/${game.pin}`);
-//   const turnRef = gameRef.child('turns/');
-//   const turnRefs = {
-//     turnRef,
-//     currentTurn: turnRef.child('currentTurn'),
-//     currentPlayer: turnRef.child('currentPlayer'),
-//     previousTurns: turnRef.child('previousTurns')
-//   };
-//   return turnRefs;
-// };
-
 export const switchTurns = (firebase, game) => () => {
-  const allPlayersList = Object.keys(game.users.players);
-  const currentPlayerIdx = allPlayersList.indexOf(game.turns.currentPlayer);
+  const { users: { players }, turns: { currentPlayer } } = game;
+  const allPlayersList = Object.keys(players);
+  const currentPlayerIdx = allPlayersList.indexOf(currentPlayer);
   const nextPlayer = allPlayersList[(currentPlayerIdx + 1) % allPlayersList.length];
   const { currentTurnRef, previousTurnsRef, currentPlayerRef } = getTurnRefs(firebase, game);
   const updates = {};
+  const endedTurnKey = previousTurnsRef.push().key;
   currentTurnRef.once('value', snapshot => {
-    const endedTurnKey = previousTurnsRef.push().key;
-    updates[endedTurnKey] = { ...snapshot.val() };
+    updates[endedTurnKey] = snapshot.val();
   });
   previousTurnsRef.update(updates);
   currentPlayerRef.set(nextPlayer);
@@ -61,12 +49,24 @@ export const allowAction = (firebase, game) => () => {
         case 'Exchange':
           exchangePartOne(firebase, game)(currentPlayer);
           updates.status = 'playerChoosingExchange';
+          updates['didPlayerExchange'] = true;
           break;
         case 'Assassinate':
+          updates['didPlayerKill'] = true;
           updates.status = 'targetChoosingKillCard';
           break;
         case 'Coup':
           updates.status = 'targetChoosingKillCard';
+          updates['didPlayerKill'] = true;
+          break;
+        case 'Steal':
+          updates['didPlayerStealCoins'] = true;
+          break;
+        case 'Foreign Aid':
+          updates['didPlayerReceiveCoins'] = true;
+          break;
+        case 'Tax':
+          updates['didPlayerReceiveCoins'] = true;
           break;
         default:
           break;
@@ -87,7 +87,7 @@ export const challengeAction = (firebase, game) => (challengerKey) => {
     status: 'playerChoosingLostChallengeCard'
   };
 
-  if (!currentTurn.challengerKey) {
+  if (currentTurn.challengerKey === '') {
     for (let cardKey in currentPlayerCards) {
       if (currentTurn.actionInfluences.includes(currentPlayerCards[cardKey])) {
         updates['playerProvedCardKey'] = cardKey;
@@ -101,7 +101,7 @@ export const challengeAction = (firebase, game) => (challengerKey) => {
 };
 
 export const blockAction = (firebase, game) => (blockerKey) => {
-  const { hands: { liveCards }, turns: { currentTurn, currentPlayer } } = game;
+  const { hands: { liveCards }, turns: { currentTurn } } = game;
   const blockerCards = liveCards[blockerKey];
   const { currentTurnRef } = getTurnRefs(firebase, game);
   const updates = {
@@ -178,9 +178,9 @@ export const submitChallengeLossChoice = (firebase, game) => (loserKey, cardKey)
 
 export const challengeOutcome = (firebase, game) => () => {
   const { currentTurn } = game.turns;
-  if (!currentTurn.action) return;
 
   const {
+    status,
     action,
     playerKey,
     wasActionChallenged,
@@ -214,23 +214,35 @@ export const challengeOutcome = (firebase, game) => () => {
   const { currentTurnRef } = getTurnRefs(firebase, game);
   const updates = { wasActionAllowed: false, status: 'actionResolved' };
   if (!challengerWonChallenge || !blockerWonChallenge) {
-    updates.wasActionAllowed = false;
+    updates.wasActionAllowed = true;
     switch (action) {
       case 'Exchange':
         exchangePartOne(firebase, game)(playerKey);
+        updates['didPlayerExchange'] = true;
         updates.status = 'playerChoosingExchange';
         break;
       case 'Coup':
+        updates['didPlayerKill'] = true;
         updates.status = 'targetChoosingKillCard';
         break;
       case 'Assassinate':
+        updates['didPlayerKill'] = true;
         updates.status = 'targetChoosingKillCard';
+        break;
+      case 'Steal':
+        updates['didPlayerStealCoins'] = true;
+        break;
+      case 'Foreign Aid':
+        updates['didPlayerReceiveCoins'] = true;
+        break;
+      case 'Tax':
+        updates['didPlayerReceiveCoins'] = true;
         break;
       default:
         break;
     }
-    currentTurnRef.update({ wasActionAllowed: true });
   }
+  currentTurnRef.update(updates);
 };
 
 export const submitKillChoice = (firebase, game) => (cardKey) => {
@@ -271,7 +283,7 @@ export const actionOutcome = (firebase, game) => () => {
     if (didPlayerReceiveCoins) receiveCoins(firebase, game, receiptAmount)(playerKey);
   }
   const { currentTurnRef } = getTurnRefs(firebase, game);
-  currentTurnRef.update({ isComplete: true });
+  currentTurnRef.update({ isComplete: true, status: 'turnComplete' });
   switchTurns(firebase,game)();
 };
 
