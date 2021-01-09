@@ -10,3 +10,14 @@
     align-items: center;
     z-index: 100;
 }
+
+.player-selector, .audience-selector {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+form.invisible {
+    display: none;
+}

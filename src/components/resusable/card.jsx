@@ -2,9 +2,10 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { useFirebase } from 'react-redux-firebase';
 import styled from 'styled-components';
+import Button from './button';
 import * as cdt from '../../util/styles';
 
-const Card = ({ cardWidth, cardHeight, character, faceUp=true, cardKey }) => {
+const Card = ({ cardWidth, cardHeight, character, faceUp=true, cardKey, isChooser, cardFunction, undoCardFunction, isSelected }) => {
     const cardData = useSelector(state => state.staticData.cards);
     const firebase = useFirebase();
     const firebaseRef = firebase.storage().ref();
@@ -28,17 +29,21 @@ const Card = ({ cardWidth, cardHeight, character, faceUp=true, cardKey }) => {
         }
 
         firebaseRef.child(image).getDownloadURL().then(url => {
-            document.getElementById(`img-${cardKey}`).src = url;
+          const imgElement = document.getElementById(`img-${cardKey}`);
+          if (imgElement) imgElement.src = url;
         });
         firebaseRef.child(symbol).getDownloadURL().then(url => {
-            document.getElementById(`symbol-${cardKey}`).src = url;
+          const symbolElement = document.getElementById(`symbol-${cardKey}`);
+          if (symbolElement) symbolElement.src = url;
         });
         firebaseRef.child(brushStroke).getDownloadURL().then(url => {
-            document.getElementById(`abilities-${cardKey}`).style.backgroundImage = `url(${url})`;
+          const abilitiesElement = document.getElementById(`abilities-${cardKey}`);
+          if (abilitiesElement) abilitiesElement.style.backgroundImage = `url(${url})`;
         });
 
         firebaseRef.child('textures/paper_texture.png').getDownloadURL().then(url => {
-            document.getElementById(`card-${cardKey}`).style.backgroundImage = `url(${url})`;
+          const cardElement = document.getElementById(`card-${cardKey}`);
+          if (cardElement) cardElement.style.backgroundImage = `url(${url})`;
         });
 
         const StyledCard = styled.div(({ width, height }) => ({
@@ -137,8 +142,29 @@ const Card = ({ cardWidth, cardHeight, character, faceUp=true, cardKey }) => {
             writingMode: 'vertical-lr'
         }));
 
+        const cardModal = isChooser ? (
+          <div className="card-modal" style={{
+            backgroundColor: cdt.blackShadow,
+            position: 'absolute',
+            top: 0, bottom: 0, left: 0, right: 0,
+            width: '100%', height: '100%',
+            boxSizing: 'border-box',
+            padding: 0, margin: 0,
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 100
+          }}>
+            {isSelected ?
+              <Button text="Selected" onClick={undoCardFunction(cardKey)} color="red" /> :
+              <Button text="Select" onClick={cardFunction(cardKey)} color="black" />}
+          </div>
+        ) : null;
+
         return (
             <StyledCard width={cardWidth} height={cardHeight} id={`card-${cardKey}`}>
+                {cardModal}
                 <div style={cardTintStyle} />
                 <CardHeader color={'#4C9870'}>{name}</CardHeader>
                 <img id={`img-${cardKey}`} style={cardImageStyle} />

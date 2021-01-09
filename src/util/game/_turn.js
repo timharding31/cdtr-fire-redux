@@ -84,7 +84,8 @@ export const challengeAction = (firebase, game) => (challengerKey) => {
     challengerKey,
     wasActionChallenged: true,
     challengerWonChallenge: true,
-    status: 'playerChoosingLostChallengeCard'
+    status: 'playerChoosingLostChallengeCard',
+    wasActionAllowed: false,
   };
 
   if (currentTurn.challengerKey === '') {
@@ -93,6 +94,7 @@ export const challengeAction = (firebase, game) => (challengerKey) => {
         updates['playerProvedCardKey'] = cardKey;
         updates.challengerWonChallenge = false;
         updates.status = 'challengerChoosingLostChallengeCard';
+        updates.wasActionAllowed = true;
       }
     }
     currentTurnRef.update(updates);
@@ -125,7 +127,6 @@ export const blockAction = (firebase, game) => (blockerKey) => {
 export const challengeBlock = (firebase, game) => () => {
   const { hands: { liveCards }, turns: { currentTurn: { blockerKey, blockInfluences } } } = game;
   const blockerCards = liveCards[blockerKey];
-
   const updates = {
     wasBlockChallenged: true,
     blockerWonChallenge: false,
@@ -137,6 +138,9 @@ export const challengeBlock = (firebase, game) => () => {
       updates['blockerProvedCardKey'] = cardKey;
       updates.blockerWonChallenge = true;
       updates.wasActionAllowed = false;
+      updates['didPlayerKill'] = false;
+      updates['didPlayerReceiveCoins'] = false;
+      updates['didPlayerStealCoins'] = false;
       updates.status = 'playerChoosingLostChallengeCard';
     }
   }
@@ -213,7 +217,7 @@ export const challengeOutcome = (firebase, game) => () => {
   }
   const { currentTurnRef } = getTurnRefs(firebase, game);
   const updates = { wasActionAllowed: false, status: 'actionResolved' };
-  if (!challengerWonChallenge || !blockerWonChallenge) {
+  if ((wasActionChallenged && !challengerWonChallenge) || (wasBlockChallenged && !blockerWonChallenge)) {
     updates.wasActionAllowed = true;
     switch (action) {
       case 'Exchange':

@@ -30,7 +30,7 @@ const GameContainer = () => {
       case 'In progress':
         return (
           <>
-            <GamePlay players={Object.values(players)} numPlayers={numPlayers} />
+            <GamePlay game={game} players={Object.values(players)} numPlayers={numPlayers} />
           </>
         )
       default:

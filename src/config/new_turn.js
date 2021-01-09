@@ -228,6 +228,7 @@ export const newBlankTurn = (playerKey, targetKey='', playerChoice) => {
   const choiceOptions = getChoiceOptions(playerKey, targetKey, playerChoice);
   const challengeOutcomeOptions = getChallengeOutcomeOptions();
   const actionOutcomeOptions = playerChoice === 'Income' ? { isComplete: true, didPlayerReceiveCoins: true } : getActionOutcomeOptions();
+  if (playerChoice === 'Coup') actionOutcomeOptions.didPlayerKill = true;
 
   return {
     ...choiceOptions,

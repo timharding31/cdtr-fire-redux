@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import * as cdt from '../../util/styles';
 
-const Button = ({ color, text, onClick, fontSize }) => {
+const Button = ({ color, text, onClick, fontSize, buttonType, filter }) => {
     const StyledButton = styled.button(() => ({
         display: 'inline-block',
         padding: '0.7em 1.4em',
@@ -22,13 +22,14 @@ const Button = ({ color, text, onClick, fontSize }) => {
         fontSize,
         cursor: 'pointer',
         transition: 'all 0.1s ease-in',
+        filter: `grayscale(${filter === 'pale' ? 75 : 0}%)`,
         '&:hover': {
             filter: 'contrast(120%)',
             transform: 'scale(1.01)'
         }
     }));
 
-    return <StyledButton onClick={onClick} >{text}</StyledButton>
+    return <StyledButton type={buttonType || "button"} onClick={onClick} >{text}</StyledButton>
 }
 
 export default Button

@@ -5,12 +5,11 @@ import GamePlay from './gameplay/';
 const Game = () => {
   const { wasGameFound, game } = useGame();
   const { wasPlayerFound } = usePlayer();
-  const { currentTurn } = useTurn();
 
-  if (wasGameFound && wasPlayerFound && currentTurn && game) {
+  if (wasGameFound && wasPlayerFound) {
     switch (game.status) {
         case 'In progress':
-          return <GamePlay game={game} currentTurn={currentTurn} />
+          return <GamePlay game={game} />
         case 'Waiting for players':
         default:
           return null;
