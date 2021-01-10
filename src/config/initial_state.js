@@ -158,7 +158,7 @@ export const createGameState = (pin) => ({
         courtDeck: ''
     },
     turns: {
-        currentTurn: { status: 'playerChoosing' },
+        currentTurn: { status: 'playerChoosing', loaded: true },
         currentPlayer: '',
         previousTurns: ''
     }

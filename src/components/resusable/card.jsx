@@ -1,50 +1,63 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
-import { useFirebase } from 'react-redux-firebase';
 import styled from 'styled-components';
 import Button from './button';
+import allCharacters from './characters/';
 import * as cdt from '../../util/styles';
+const paperTexture = require('../../images/textures/paper_texture.png');
 
-const Card = ({ cardWidth, cardHeight, character, faceUp=true, cardKey, isChooser, cardFunction, undoCardFunction, isSelected }) => {
-    const cardData = useSelector(state => state.staticData.cards);
-    const firebase = useFirebase();
-    const firebaseRef = firebase.storage().ref();
+const Card = ({
+  cardWidth,
+  cardHeight,
+  character,
+  faceUp=true,
+  cardKey,
+  isChooser,
+  cardFunction,
+  undoCardFunction,
+  isSelected,
+  buttonColor,
+}) => {
+
+
+    // const cardData = useSelector(state => state.staticData.cards);
+    // const firebase = useFirebase();
+    // const firebaseRef = firebase.storage().ref();
     if (faceUp) {
-        const {
-            backgroundColor,
-            brushStroke,
-            counteraction,
-            effect,
-            image,
-            name,
-            symbol
-        } = cardData[character];
+      const {
+        backgroundColor,
+        brushStroke,
+        counteraction,
+        effect,
+        image,
+        name,
+        symbol,
+        textColor
+      } = allCharacters[character];
 
-        const colorMatch = {
-            ambassador: cdt.green,
-            assassin: cdt.black,
-            captain: cdt.blue,
-            contessa: cdt.red,
-            duke: cdt.purple
-        }
+        // const colorMatch = {
+        //     ambassador: cdt.green,
+        //     assassin: cdt.black,
+        //     captain: cdt.blue,
+        //     contessa: cdt.red,
+        //     duke: cdt.purple
+        // }
 
-        firebaseRef.child(image).getDownloadURL().then(url => {
-          const imgElement = document.getElementById(`img-${cardKey}`);
-          if (imgElement) imgElement.src = url;
-        });
-        firebaseRef.child(symbol).getDownloadURL().then(url => {
-          const symbolElement = document.getElementById(`symbol-${cardKey}`);
-          if (symbolElement) symbolElement.src = url;
-        });
-        firebaseRef.child(brushStroke).getDownloadURL().then(url => {
-          const abilitiesElement = document.getElementById(`abilities-${cardKey}`);
-          if (abilitiesElement) abilitiesElement.style.backgroundImage = `url(${url})`;
-        });
-
-        firebaseRef.child('textures/paper_texture.png').getDownloadURL().then(url => {
-          const cardElement = document.getElementById(`card-${cardKey}`);
-          if (cardElement) cardElement.style.backgroundImage = `url(${url})`;
-        });
+        // firebaseRef.child(image).getDownloadURL().then(url => {
+        //   const imgElement = document.getElementById(`img-${cardKey}`);
+        //   if (imgElement) imgElement.src = url;
+        // });
+        // firebaseRef.child(symbol).getDownloadURL().then(url => {
+        //   const symbolElement = document.getElementById(`symbol-${cardKey}`);
+        //   if (symbolElement) symbolElement.src = url;
+        // });
+        // firebaseRef.child(brushStroke).getDownloadURL().then(url => {
+        //   const abilitiesElement = document.getElementById(`abilities-${cardKey}`);
+        //   if (abilitiesElement) abilitiesElement.style.backgroundImage = `url(${url})`;
+        // });
+        // firebaseRef.child('textures/paper_texture.png').getDownloadURL().then(url => {
+        //   const cardElement = document.getElementById(`card-${cardKey}`);
+        //   if (cardElement) cardElement.style.backgroundImage = `url(${url})`;
+        // });
 
         const StyledCard = styled.div(({ width, height }) => ({
             width,
@@ -58,7 +71,8 @@ const Card = ({ cardWidth, cardHeight, character, faceUp=true, cardKey, isChoose
             backgroundRepeat: `repeat`,
             boxShadow: `0 0 10px 1px ${cdt.blackShadow}`,
             transition: `all .2s ease-in-out`,
-            margin: '1px 0'
+            margin: '1px 0',
+            backgroundImage: `url(${paperTexture.default})`
         }));
 
         const cardTintStyle = {
@@ -112,7 +126,8 @@ const Card = ({ cardWidth, cardHeight, character, faceUp=true, cardKey, isChoose
             boxSizing: 'border-box',
             opacity: '90%',
             listStyle: 'none',
-            visibility: `${Number(cardHeight.substring(0, 2)) < 35 ? 'hidden': 'visible'}`
+            visibility: `${Number(cardHeight.substring(0, 2)) < 35 ? 'hidden': 'visible'}`,
+            backgroundImage: `url(${brushStroke})`
         };
 
         const cardAbilitiesListItemStyle = {
@@ -126,20 +141,21 @@ const Card = ({ cardWidth, cardHeight, character, faceUp=true, cardKey, isChoose
         }
 
         const CardHeader = styled.h2(() => ({
-            color: colorMatch[character],
+            color: textColor,
             position: 'absolute',
             transform: 'rotate(180deg)',
             margin: '0',
             padding: '0',
-            right: '2.5%',
-            top: '5%',
+            right: '0%',
+            top: '2.5%',
             bottom: 'auto',
             left: 'auto',
-            fontSize: `${Number(cardHeight.substring(0,2))/7}vh`,
+            fontSize: `${Number(cardHeight.substring(0,2))/6}vh`,
             textShadow: `0.25px 0.25px 0.5px ${cdt.blackShadow}`,
-            fontWeight: '700',
+            fontWeight: '900',
             zIndex: '0',
-            writingMode: 'vertical-lr'
+            writingMode: 'vertical-lr',
+            fontFamily: '\'Dancing Script\', cursive',
         }));
 
         const cardModal = isChooser ? (
@@ -157,7 +173,7 @@ const Card = ({ cardWidth, cardHeight, character, faceUp=true, cardKey, isChoose
             zIndex: 100
           }}>
             {isSelected ?
-              <Button text="Selected" onClick={undoCardFunction(cardKey)} color="red" /> :
+              <Button text="Selected" onClick={undoCardFunction(cardKey)} color={buttonColor} /> :
               <Button text="Select" onClick={cardFunction(cardKey)} color="black" />}
           </div>
         ) : null;
@@ -167,8 +183,8 @@ const Card = ({ cardWidth, cardHeight, character, faceUp=true, cardKey, isChoose
                 {cardModal}
                 <div style={cardTintStyle} />
                 <CardHeader color={'#4C9870'}>{name}</CardHeader>
-                <img id={`img-${cardKey}`} style={cardImageStyle} />
-                <img id={`symbol-${cardKey}`} style={cardSymbolStyle} />
+                <img id={`img-${cardKey}`} src={image} style={cardImageStyle} />
+                <img id={`symbol-${cardKey}`} src={symbol} style={cardSymbolStyle} />
                 <ul id={`abilities-${cardKey}`} style={cardAbilitiesStyle} >
                     {[effect, counteraction].map((ability, idx) => (
                         <li key={`ability-${idx}`} style={cardAbilitiesListItemStyle}>
@@ -177,7 +193,7 @@ const Card = ({ cardWidth, cardHeight, character, faceUp=true, cardKey, isChoose
                     ))}
                 </ul>
             </StyledCard>
-        )
+        );
     } else {
         return null
     }

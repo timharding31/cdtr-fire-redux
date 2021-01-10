@@ -7,7 +7,8 @@ export const dealCard = (deckRef, playerHandRef) => {
     const randomCardKey = deckKeys[Math.floor(Math.random() * deckKeys.length)];
     const randomCard = deck[randomCardKey];
     deckRef.child(randomCardKey).remove();
-    playerHandRef.update({ [randomCardKey]: randomCard });
+    playerHandRef.child(randomCardKey).set(randomCard);
+    // playerHandRef.update({ [randomCardKey]: randomCard });
   });
 };
 

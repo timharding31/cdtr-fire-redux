@@ -34,7 +34,6 @@ export const useNewGame = () => {
 
 export const useGame = () => {
   const { gamePIN } = useParams();
-  useFirebaseConnect(`games/${gamePIN}`);
   const allGames = useSelector(state => state.firebase.data.games);
 
   if (!isLoaded(allGames) || isEmpty(allGames[gamePIN])) {
@@ -66,14 +65,16 @@ export const useTurn = () => {
   const { wasGameFound, game } = useGame();
   const [currentPlayer, setCurrentPlayer] = useState();
   const [currentTurn, setCurrentTurn] = useState();
+  const [turnLoaded, setTurnLoaded] = useState(false);
   useEffect(() => {
     if (wasGameFound && game.status === 'In progress') {
       setCurrentPlayer(game.turns.currentPlayer);
       setCurrentTurn(game.turns.currentTurn);
+      setTurnLoaded(game.turns.currentTurn.loaded);
     }
   }, [wasGameFound, game]);
 
-  return { currentPlayer, currentTurn };
+  return { currentPlayer, currentTurn, turnLoaded };
 };
 
 export const usePlayer = () => {

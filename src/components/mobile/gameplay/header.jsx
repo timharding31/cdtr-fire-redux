@@ -12,14 +12,24 @@ const PlayerSelector = ({ game, turnStatus, turn, playerKey, selectTurnAction, p
   const [choice, setChoice] = useState('');
   const allChoices = turnOptions(playerCoins);
   const renderChoices = ({ choiceName, choiceColor, choiceId }) => (
-    <Button key={choiceId} buttonType="submit" onClick={() => setChoice(choiceName)} text={choiceName} color={choiceColor} />
+    <Button key={choiceId} onClick={(e) => {
+      e.preventDefault();
+      if (['Coup', 'Assassinate', 'Steal'].includes(choiceName)) {
+        setChoice(choiceName);
+        setPageSelected(2);
+      } else {
+        selectTurnAction(choiceName, '');
+      }
+    }} text={choiceName} color={choiceColor} />
   );
 
-  const [target, setTarget] = useState('');
   const { users: { players } } = game;
   const allTargets = Object.entries(players).filter(([key, _]) => key !== playerKey);
   const renderTargets = ([targetKey, targetName]) => (
-    <Button key={targetKey} buttonType="submit" onClick={() => setTarget(targetKey)} text={targetName} color="red" />
+    <Button key={targetKey} onClick={(e) => {
+      e.preventDefault();
+      selectTurnAction(choice, targetKey);
+    }} text={targetName} color="red" />
   );
 
   const [pageSelected, setPageSelected] = useState(1);
@@ -30,35 +40,25 @@ const PlayerSelector = ({ game, turnStatus, turn, playerKey, selectTurnAction, p
   const allowBlockButton = wasActionBlocked ? <Button onClick={allowBlock} buttonType="button" text="Allow Block" color="green"/> : null;
   const challengeBlockButton = wasActionBlocked ? <Button onClick={challengeBlock} buttonType="button" text="Challenge Block" color="black" /> : null;
 
-  const PageOne = ({ setPageSelected, selectTurnAction }) => (
-    <form className={`player-selector ${pageSelected === 1 ? 'visible' : 'invisible'}`} onSubmit={(e) => {
-      e.preventDefault();
-      if (['Coup', 'Assassinate', 'Steal'].includes(choice)) {
-        setPageSelected(2);
-      } else {
-        selectTurnAction(choice, target);
-      }
-    }} >
+  const pageOne = (
+    <div className={`player-selector ${pageSelected === 1 ? 'visible' : 'invisible'}`} >
       <h3>Select an Action for your Turn:</h3>
       {allChoices.map(renderChoices)}
-    </form>
+    </div>
   );
 
-  const PageTwo = ({ selectTurnAction }) => (
-    <form className={`player-selector ${pageSelected === 2 ? 'visible' : 'invisible'}`} onSubmit={(e) => {
-      e.preventDefault();
-      selectTurnAction(choice, target);
-    }} >
+  const pageTwo = (
+    <div className={`player-selector ${pageSelected === 2 ? 'visible' : 'invisible'}`} >
       <h3>{`Select an Opponent to ${choice}${choice === 'Steal' ? ' from' : ''}:`}</h3>
       {allTargets.map(renderTargets)}
-    </form>
+    </div>
   );
 
   if (turnStatus === 'playerChoosing') {
     return (
       <>
-        <PageOne setPageSelected={setPageSelected} selectTurnAction={selectTurnAction} />
-        <PageTwo selectTurnAction={selectTurnAction} />
+        {pageOne}
+        {pageTwo}
       </>
     );
   } else if (turnStatus === 'playerRespondingToBlock') {
@@ -117,13 +117,13 @@ const CardSelector = ({ isCurrentPlayer, isCurrentTarget, isBlocker, isChallenge
   const blockerName = blockerKey ? players[blockerKey] : null;
 
   let message = '';
-  if (wasActionChallenged && challengerWonChallenge && isCurrentPlayer) {
+  if (turnStatus === 'playerChoosingLostChallengeCard' && wasActionChallenged && challengerWonChallenge && isCurrentPlayer) {
     message = `You've lost ${challengerName}'s challenge of your ${action}. Select an Influence to lose:`;
-  } else if (wasActionChallenged && !challengerWonChallenge && isChallenger) {
+  } else if (turnStatus === 'challengerChoosingLostChallengeCard' && wasActionChallenged && !challengerWonChallenge && isChallenger) {
     message = `You've lost your challenge of ${playerName}'s ${action}. Select an Influence to lose:`;
-  } else if (wasBlockChallenged && blockerWonChallenge && isCurrentPlayer) {
+  } else if (turnStatus === 'playerChoosingLostChallengeCard' && wasBlockChallenged && blockerWonChallenge && isCurrentPlayer) {
     message = `You've lost your challenge of ${blockerName}'s Block. Select an Influence to lose:`;
-  } else if (wasBlockChallenged && !blockerWonChallenge && isBlocker) {
+  } else if (turnStatus === 'blockerChoosingLostChallengeCard' && wasBlockChallenged && !blockerWonChallenge && isBlocker) {
     message = `You've lost ${playerName}'s challenge of your Block. Select an Influence to lose:`;
   } else if (turnStatus === 'targetChoosingKillCard' && isCurrentTarget) {
     message = `${playerName}'s ${action} was successful. Select an Influence to lose:`;
@@ -147,8 +147,8 @@ const PlayerHeader = (props) => {
   return (
     <div className="player-header">
       <Dashboard playerName={props.playerName} />
-      {props.isCurrentPlayer ? <PlayerSelector {...props} /> : <AudienceSelector {...props} />}
-      {props.isChooser ? <CardSelector {...props} /> : null}
+      {props.turnLoaded ? props.isCurrentPlayer ? <PlayerSelector {...props} /> : <AudienceSelector {...props} /> : null}
+      {(props.turnLoaded && props.isChooser) ? <CardSelector {...props} /> : null}
     </div>
   )
 };

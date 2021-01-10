@@ -18,6 +18,6 @@
     justify-content: flex-start;
 }
 
-form.invisible {
+.player-selector.invisible {
     display: none;
 }

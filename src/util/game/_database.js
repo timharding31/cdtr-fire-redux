@@ -33,7 +33,8 @@ export const getTurnRefs = (firebase, game) => {
     turnsRef,
     currentTurnRef: turnsRef.child('currentTurn'),
     currentPlayerRef: turnsRef.child('currentPlayer'),
-    previousTurnsRef: turnsRef.child('previousTurns')
+    previousTurnsRef: turnsRef.child('previousTurns'),
+    turnLoadedRef: turnsRef.child('currentTurn/loaded'),
   };
   return turnRefs;
 };

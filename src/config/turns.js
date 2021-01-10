@@ -9,7 +9,7 @@ export const turnOptions = (numCoins) => {
     { choiceId: 107, choiceName: 'Steal', choiceColor: 'blue' },
   ];
   if (numCoins >= 10) {
-    return [{ choiceId: 103, choiceName: 'Coup', color: 'red' }];
+    return [{ choiceId: 103, choiceName: 'Coup', choiceColor: 'red' }];
   } else if (numCoins >= 7) {
     return allTurns;
   } else if (numCoins >= 3) {

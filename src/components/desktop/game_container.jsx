@@ -1,11 +1,14 @@
 import React from 'react';
-import { useFirebase } from 'react-redux-firebase';
+import { useParams } from 'react-router-dom';
+import { useFirebaseConnect } from 'react-redux-firebase';
 import { useGame, usePlayers, useGameFunctions, useCurrentPlayer, useTurn } from '../../util/hooks';
 import * as GameUtil from '../../util/game';
 import Lobby from './lobby';
 import GamePlay from './gameplay/';
 
 const GameContainer = () => {
+  const { gamePIN } = useParams();
+  useFirebaseConnect(`games/${gamePIN}`);
   const { wasGameFound, game } = useGame();
   const { werePlayersFound, players, numPlayers } = usePlayers();
   const { startGame } = useGameFunctions();

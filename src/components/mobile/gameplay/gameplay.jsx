@@ -32,6 +32,7 @@ const cardReducer = (state, { type, key }) => {
 
 const GamePlay = ({ game }) => {
   const { currentTurn } = game.turns;
+  const { loaded } = currentTurn;
   const {
     playerKey,
     playerName,
@@ -39,7 +40,7 @@ const GamePlay = ({ game }) => {
     isCurrentTarget,
     isBlocker,
     isChallenger,
-    playerCards,
+    // playerCards,
     playerCoins,
   } = usePlayer();
 
@@ -97,6 +98,7 @@ const GamePlay = ({ game }) => {
     <div className="player-gameplay-root">
       <div className="player-gameplay-background">
         <PlayerHeader
+          turnLoaded={loaded}
           game={game}
           turnStatus={currentTurn.status}
           turn={currentTurn}
@@ -126,8 +128,6 @@ const GamePlay = ({ game }) => {
           isCurrentPlayer={isCurrentPlayer}
           isCurrentTarget={isCurrentTarget}
           isChallenger={isChallenger}
-          liveCards={Object.entries(playerCards)}
-          numCards={Object.keys(playerCards).length}
           isChooser={isChooser}
           cardFunction={cardFunction}
           undoCardFunction={undoCardFunction}
@@ -136,7 +136,7 @@ const GamePlay = ({ game }) => {
         <PlayerCoins coins={playerCoins} />
       </div>
     </div>
-  )
+  );
 };
 
 

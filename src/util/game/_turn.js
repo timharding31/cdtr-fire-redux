@@ -7,19 +7,21 @@ export const switchTurns = (firebase, game) => () => {
   const allPlayersList = Object.keys(players);
   const currentPlayerIdx = allPlayersList.indexOf(currentPlayer);
   const nextPlayer = allPlayersList[(currentPlayerIdx + 1) % allPlayersList.length];
-  const { currentTurnRef, previousTurnsRef, currentPlayerRef } = getTurnRefs(firebase, game);
-  const updates = {};
+  const { currentTurnRef, previousTurnsRef, currentPlayerRef, turnLoadedRef } = getTurnRefs(firebase, game);
+  turnLoadedRef.set(false);
+  const updates = { loaded: true };
   const endedTurnKey = previousTurnsRef.push().key;
   currentTurnRef.once('value', snapshot => {
     updates[endedTurnKey] = snapshot.val();
   });
   previousTurnsRef.update(updates);
   currentPlayerRef.set(nextPlayer);
-  currentTurnRef.set({ status: 'playerChoosing' });
+  currentTurnRef.set({ status: 'playerChoosing', loaded: true });
 };
 
 export const startTurn = (firebase, game) => (playerKey, targetKey='', playerChoice) => {
-  const { currentTurnRef } = getTurnRefs(firebase, game);
+  const { currentTurnRef, turnLoadedRef } = getTurnRefs(firebase, game);
+  turnLoadedRef.set(false);
   let newTurn = newBlankTurn(playerKey, targetKey, playerChoice);
   if (newTurn.paymentAmount > 0) payCoins(firebase, game, newTurn.paymentAmount)(playerKey);
   if (newTurn.challengeable) {
@@ -31,20 +33,21 @@ export const startTurn = (firebase, game) => (playerKey, targetKey='', playerCho
       }
     }
   }
-  currentTurnRef.update(newTurn);
+  currentTurnRef.update({ ...newTurn, loaded: true });
 };
 
 export const allowAction = (firebase, game) => () => {
   const { users: { players }, turns: { currentPlayer, currentTurn: { action } } } = game;
   const numPlayers = Object.keys(players).length;
 
-  const { currentTurnRef } = getTurnRefs(firebase, game);
+  const { currentTurnRef, turnLoadedRef } = getTurnRefs(firebase, game);
   currentTurnRef.child('numAllowers').transaction(numAllowers => numAllowers + 1);
   currentTurnRef.child('numResponses').transaction(numResponses => numResponses + 1);
   currentTurnRef.once('value', snapshot => {
     const { numAllowers } = snapshot.val();
     if (numAllowers + 1 === numPlayers) {
-      const updates = { wasActionAllowed: true, status: 'actionResolved' }
+      turnLoadedRef.set(false);
+      const updates = { wasActionAllowed: true, status: 'actionResolved' };
       switch (action) {
         case 'Exchange':
           exchangePartOne(firebase, game)(currentPlayer);
@@ -71,7 +74,7 @@ export const allowAction = (firebase, game) => () => {
         default:
           break;
       }
-      currentTurnRef.update(updates);
+      currentTurnRef.update({ ...updates, loaded: true });
     }
   });
 };
@@ -79,7 +82,7 @@ export const allowAction = (firebase, game) => () => {
 export const challengeAction = (firebase, game) => (challengerKey) => {
   const { hands: { liveCards }, turns: { currentTurn, currentPlayer } } = game;
   const currentPlayerCards = liveCards[currentPlayer];
-  const { currentTurnRef } = getTurnRefs(firebase, game);
+  const { currentTurnRef, turnLoadedRef } = getTurnRefs(firebase, game);
   const updates = {
     challengerKey,
     wasActionChallenged: true,
@@ -89,6 +92,7 @@ export const challengeAction = (firebase, game) => (challengerKey) => {
   };
 
   if (currentTurn.challengerKey === '') {
+    turnLoadedRef.set(false);
     for (let cardKey in currentPlayerCards) {
       if (currentTurn.actionInfluences.includes(currentPlayerCards[cardKey])) {
         updates['playerProvedCardKey'] = cardKey;
@@ -97,7 +101,7 @@ export const challengeAction = (firebase, game) => (challengerKey) => {
         updates.wasActionAllowed = true;
       }
     }
-    currentTurnRef.update(updates);
+    currentTurnRef.update({ ...updates, loaded: true });
   }
   currentTurnRef.child('numResponses').transaction(numResponses => numResponses + 1);
 };
@@ -105,7 +109,7 @@ export const challengeAction = (firebase, game) => (challengerKey) => {
 export const blockAction = (firebase, game) => (blockerKey) => {
   const { hands: { liveCards }, turns: { currentTurn } } = game;
   const blockerCards = liveCards[blockerKey];
-  const { currentTurnRef } = getTurnRefs(firebase, game);
+  const { currentTurnRef, turnLoadedRef } = getTurnRefs(firebase, game);
   const updates = {
     blockerKey,
     wasActionBlocked: true,
@@ -113,13 +117,14 @@ export const blockAction = (firebase, game) => (blockerKey) => {
   };
 
   if (!currentTurn.blockerKey) {
+    turnLoadedRef.set(false);
     for (let cardKey in blockerCards) {
       if (currentTurn.blockInfluences.includes(blockerCards[cardKey])) {
         updates['blockerProvedCardKey'] = cardKey;
         updates['blockerWonChallenge'] = true;
       }
     }
-    currentTurnRef.update(updates);
+    currentTurnRef.update({ ...updates, loaded: true });
   }
   currentTurnRef.child('numResponses').transaction(numResponses => numResponses + 1);
 };
@@ -127,6 +132,8 @@ export const blockAction = (firebase, game) => (blockerKey) => {
 export const challengeBlock = (firebase, game) => () => {
   const { hands: { liveCards }, turns: { currentTurn: { blockerKey, blockInfluences } } } = game;
   const blockerCards = liveCards[blockerKey];
+  const { currentTurnRef, turnLoadedRef } = getTurnRefs(firebase, game);
+  turnLoadedRef.set(false);
   const updates = {
     wasBlockChallenged: true,
     blockerWonChallenge: false,
@@ -144,24 +151,27 @@ export const challengeBlock = (firebase, game) => () => {
       updates.status = 'playerChoosingLostChallengeCard';
     }
   }
-  const { currentTurnRef } = getTurnRefs(firebase, game);
-  currentTurnRef.update(updates);
-}
+  currentTurnRef.update({ ...updates, loaded: true });
+};
 
 export const allowBlock = (firebase, game) => () => {
-  const { currentTurnRef } = getTurnRefs(firebase, game);
+  const { currentTurnRef, turnLoadedRef } = getTurnRefs(firebase, game);
+  turnLoadedRef.set(false);
   currentTurnRef.update({
     status: 'actionResolved',
     wasActionAllowed: false,
     wasActionBlocked: true,
     didPlayerKill: false,
     didPlayerStealCoins: false,
-    didPlayerReceiveCoins: false
+    didPlayerReceiveCoins: false,
+    loaded: true,
   });
 };
 
 export const submitChallengeLossChoice = (firebase, game) => (loserKey, cardKey) => {
   const { playerKey, blockerKey, challengerKey } = game.turns.currentTurn;
+  const { currentTurnRef, turnLoadedRef } = getTurnRefs(firebase, game);
+  turnLoadedRef.set(false);
   const updates = { status: 'challengeResolved' };
   switch (loserKey) {
     case playerKey:
@@ -176,13 +186,13 @@ export const submitChallengeLossChoice = (firebase, game) => (loserKey, cardKey)
     default:
       return;
   }
-  const { currentTurnRef } = getTurnRefs(firebase, game);
-  currentTurnRef.update(updates);
+  currentTurnRef.update({ ...updates, loaded: true });
 };
 
 export const challengeOutcome = (firebase, game) => () => {
   const { currentTurn } = game.turns;
-
+  const { currentTurnRef, turnLoadedRef } = getTurnRefs(firebase, game);
+  turnLoadedRef.set(false);
   const {
     status,
     action,
@@ -215,7 +225,6 @@ export const challengeOutcome = (firebase, game) => () => {
       loseInfluence(firebase, game)(blockerKey, blockerLostCardKey);
     }
   }
-  const { currentTurnRef } = getTurnRefs(firebase, game);
   const updates = { wasActionAllowed: false, status: 'actionResolved' };
   if ((wasActionChallenged && !challengerWonChallenge) || (wasBlockChallenged && !blockerWonChallenge)) {
     updates.wasActionAllowed = true;
@@ -246,23 +255,26 @@ export const challengeOutcome = (firebase, game) => () => {
         break;
     }
   }
-  currentTurnRef.update(updates);
+  currentTurnRef.update({ ...updates, loaded: true });
 };
 
 export const submitKillChoice = (firebase, game) => (cardKey) => {
-  const { currentTurnRef } = getTurnRefs(firebase, game);
-  currentTurnRef.update({ targetKillCardKey: cardKey, status: 'actionResolved' });
+  const { currentTurnRef, turnLoadedRef } = getTurnRefs(firebase, game);
+  turnLoadedRef.set(false);
+  currentTurnRef.update({ targetKillCardKey: cardKey, status: 'actionResolved', loaded: true });
 };
 
 export const submitExchangeChoices = (firebase, game) => (exchangedCardKeys) => {
-  const { currentTurnRef } = getTurnRefs(firebase, game);
-  currentTurnRef.update({ exchangedCardKeys, status: 'actionResolved' });
+  const { currentTurnRef, turnLoadedRef } = getTurnRefs(firebase, game);
+  turnLoadedRef.set(false);
+  currentTurnRef.update({ exchangedCardKeys, status: 'actionResolved', loaded: true });
 };
 
 export const actionOutcome = (firebase, game) => () => {
   const { currentTurn } = game.turns;
   if (!currentTurn.status === 'actionResolved') return;
-
+  const { currentTurnRef, turnLoadedRef } = getTurnRefs(firebase, game);
+  turnLoadedRef.set(false);
   const {
     playerKey,
     targetKey,
@@ -286,8 +298,7 @@ export const actionOutcome = (firebase, game) => () => {
     }
     if (didPlayerReceiveCoins) receiveCoins(firebase, game, receiptAmount)(playerKey);
   }
-  const { currentTurnRef } = getTurnRefs(firebase, game);
-  currentTurnRef.update({ isComplete: true, status: 'turnComplete' });
+  currentTurnRef.update({ isComplete: true, status: 'turnComplete', loaded: true });
   switchTurns(firebase,game)();
 };
 
